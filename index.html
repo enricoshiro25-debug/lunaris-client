@@ -8,30 +8,35 @@
 <body>
   <h1>🧙‍♂️ Benvenuto alla Scuola di Magia Lunaris</h1>
 
+  <!-- Creazione PG -->
   <div id="createPGDiv">
     <h2>Crea il tuo personaggio</h2>
     <input type="text" id="newUsername" placeholder="Nome studente">
-<p>Scegli il tuo avatar:</p>
-<div class="avatarOptions">
-  <div onclick="selectAvatar('🧙‍♂️')" class="avatarChoice">
-    <div class="avatarEmoji">🧙‍♂️</div>
-    <div class="avatarLabel">Mago</div>
-  </div>
-  <div onclick="selectAvatar('🧙‍♀️')" class="avatarChoice">
-    <div class="avatarEmoji">🧙‍♀️</div>
-    <div class="avatarLabel">Strega</div>
-  </div>
-  <div onclick="selectAvatar('🧝‍♂️')" class="avatarChoice">
-    <div class="avatarEmoji">🧝‍♂️</div>
-    <div class="avatarLabel">Elfo</div>
-  </div>
-</div>
 
+    <p>Scegli il tuo avatar:</p>
+    <div class="avatarOptions">
+      <div onclick="selectAvatar('🧙‍♂️')" class="avatarChoice">
+        <div class="avatarEmoji">🧙‍♂️</div>
+        <div class="avatarLabel">Mago</div>
+      </div>
+      <div onclick="selectAvatar('🧙‍♀️')" class="avatarChoice">
+        <div class="avatarEmoji">🧙‍♀️</div>
+        <div class="avatarLabel">Strega</div>
+      </div>
+      <div onclick="selectAvatar('🧝‍♂️')" class="avatarChoice">
+        <div class="avatarEmoji">🧝‍♂️</div>
+        <div class="avatarLabel">Elfo</div>
+      </div>
+    </div>
+
+    <button onclick="createPG()">Conferma PG</button>
+  </div>
+
+  <!-- Pannello HUD e welcome -->
   <div id="welcomeDiv" style="display:none;">
     <p id="welcomeMessage"></p>
     <button onclick="goToDorm()">Vai al tuo dormitorio</button>
 
-    <!-- Pannello personale -->
     <div id="hud">
       <div id="pgBox">
         <h3>Personaggio</h3>
@@ -55,4 +60,3 @@
   <script src="game.js"></script>
 </body>
 </html>
-
