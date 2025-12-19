@@ -15,7 +15,7 @@ function createPG() {
 
   currentStudent = username;
 
-  // Nascondi creazione PG, mostra HUD
+  // Nascondi creazione PG, mostra welcome e HUD
   document.getElementById('createPGDiv').style.display = 'none';
   document.getElementById('welcomeDiv').style.display = 'block';
 
@@ -24,3 +24,14 @@ function createPG() {
   document.getElementById('avatar').textContent = currentAvatar;
 }
 
+function goToDorm() {
+  const messageDiv = document.getElementById('message');
+  messageDiv.textContent = `Sei entrato nel dormitorio di ${currentStudent} 🛏️✨`;
+}
+
+// Funzione impostazioni: cambia avatar
+function changeAvatar() {
+  const avatarDiv = document.getElementById('avatar');
+  const avatars = ['🧙‍♂️','🧙‍♀️','🧝‍♂️','🧝‍♀️','🧞‍♂️'];
+  avatarDiv.textContent = avatars[Math.floor(Math.random() * avatars.length)];
+}
