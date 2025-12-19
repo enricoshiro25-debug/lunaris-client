@@ -29,7 +29,6 @@ function goToDorm() {
   messageDiv.textContent = `Sei entrato nel dormitorio di ${currentStudent} 🛏️✨`;
 }
 
-// Funzione impostazioni: cambia avatar
 function changeAvatar() {
   const avatarDiv = document.getElementById('avatar');
   const avatars = ['🧙‍♂️','🧙‍♀️','🧝‍♂️','🧝‍♀️','🧞‍♂️'];
