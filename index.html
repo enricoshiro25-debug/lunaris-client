@@ -6,33 +6,42 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>🧙‍♂️ Benvenuto alla Scuola di Magia Lunaris</h1>
+  <h1>🧙‍♂️ Scuola di Magia Lunaris</h1>
 
-  <!-- Creazione PG -->
-  <div id="createPGDiv">
-    <h2>Crea il tuo personaggio</h2>
-    <input type="text" id="newUsername" placeholder="Nome studente">
+  <!-- Schermata Registrazione -->
+  <div id="registerDiv">
+    <h2>Registrazione</h2>
+    <input type="text" id="regUsername" placeholder="Nome studente">
 
     <p>Scegli il tuo avatar:</p>
     <div class="avatarOptions">
-      <div onclick="selectAvatar('🧙‍♂️')" class="avatarChoice">
+      <div onclick="selectAvatar('🧙‍♂️', 'register')" class="avatarChoice">
         <div class="avatarEmoji">🧙‍♂️</div>
         <div class="avatarLabel">Mago</div>
       </div>
-      <div onclick="selectAvatar('🧙‍♀️')" class="avatarChoice">
+      <div onclick="selectAvatar('🧙‍♀️', 'register')" class="avatarChoice">
         <div class="avatarEmoji">🧙‍♀️</div>
         <div class="avatarLabel">Strega</div>
       </div>
-      <div onclick="selectAvatar('🧝‍♂️')" class="avatarChoice">
+      <div onclick="selectAvatar('🧝‍♂️', 'register')" class="avatarChoice">
         <div class="avatarEmoji">🧝‍♂️</div>
         <div class="avatarLabel">Elfo</div>
       </div>
     </div>
 
-    <button onclick="createPG()">Conferma PG</button>
+    <button onclick="register()">Registrati</button>
+    <p>Hai già un account? <button onclick="showLogin()">Login</button></p>
   </div>
 
-  <!-- Pannello HUD e welcome -->
+  <!-- Schermata Login -->
+  <div id="loginDiv" style="display:none;">
+    <h2>Login</h2>
+    <input type="text" id="loginUsername" placeholder="Nome studente">
+    <button onclick="login()">Login</button>
+    <p>Non hai un account? <button onclick="showRegister()">Registrati</button></p>
+  </div>
+
+  <!-- HUD e welcome -->
   <div id="welcomeDiv" style="display:none;">
     <p id="welcomeMessage"></p>
     <button onclick="goToDorm()">Vai al tuo dormitorio</button>
