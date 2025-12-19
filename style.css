@@ -52,6 +52,32 @@ button:hover {
   width: 150px;
 }
 
-#avatar {
-  font-size: 50px;
+.avatarOptions {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 10px;
+}
+
+.avatarChoice {
+  cursor: pointer;
+  text-align: center;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: #1c1c1c;
+  transition: background 0.3s;
+}
+
+.avatarChoice:hover {
+  background-color: #3333ff;
+}
+
+.avatarEmoji {
+  font-size: 40px;
+}
+
+.avatarLabel {
+  margin-top: 5px;
+  font-size: 14px;
+  color: #ffd700;
 }
