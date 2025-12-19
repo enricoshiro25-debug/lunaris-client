@@ -11,12 +11,21 @@
   <div id="createPGDiv">
     <h2>Crea il tuo personaggio</h2>
     <input type="text" id="newUsername" placeholder="Nome studente">
-    <p>Scegli il tuo avatar:</p>
-    <button onclick="selectAvatar('🧙‍♂️')">🧙‍♂️</button>
-    <button onclick="selectAvatar('🧙‍♀️')">🧙‍♀️</button>
-    <button onclick="selectAvatar('🧝‍♂️')">🧝‍♂️</button>
-    <button onclick="createPG()">Conferma PG</button>
+<p>Scegli il tuo avatar:</p>
+<div class="avatarOptions">
+  <div onclick="selectAvatar('🧙‍♂️')" class="avatarChoice">
+    <div class="avatarEmoji">🧙‍♂️</div>
+    <div class="avatarLabel">Mago</div>
   </div>
+  <div onclick="selectAvatar('🧙‍♀️')" class="avatarChoice">
+    <div class="avatarEmoji">🧙‍♀️</div>
+    <div class="avatarLabel">Strega</div>
+  </div>
+  <div onclick="selectAvatar('🧝‍♂️')" class="avatarChoice">
+    <div class="avatarEmoji">🧝‍♂️</div>
+    <div class="avatarLabel">Elfo</div>
+  </div>
+</div>
 
   <div id="welcomeDiv" style="display:none;">
     <p id="welcomeMessage"></p>
@@ -46,3 +55,4 @@
   <script src="game.js"></script>
 </body>
 </html>
+
