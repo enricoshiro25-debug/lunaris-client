@@ -1,9 +1,10 @@
 body {
-  background-color: #000000; /* Sfondo nero */
-  color: #eaeaea;            /* Testo chiaro per contrasto */
+  background-color: #000000; /* sfondo nero */
+  color: #eaeaea;            /* testo chiaro */
   font-family: Arial, sans-serif;
   text-align: center;
   padding-top: 30px;
+  margin: 0;
 }
 
 input {
@@ -15,7 +16,7 @@ input {
 }
 
 button {
-  background-color: #3a3f5c;
+  background-color: #1c1c1c;
   color: #fff;
   border: none;
   padding: 12px 20px;
@@ -27,7 +28,7 @@ button {
 }
 
 button:hover {
-  background-color: #5c5fe2;
+  background-color: #3333ff;
 }
 
 .message {
@@ -54,6 +55,3 @@ button:hover {
 #avatar {
   font-size: 50px;
 }
-
-
-
