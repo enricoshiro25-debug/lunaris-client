@@ -1,20 +1,12 @@
-<!DOCTYPE html>
-<html lang="it">
-<head>
-  <meta charset="UTF-8">
-  <title>Scuola di Magia Lunaris</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <h1>🧙‍♂️ Benvenuto alla Scuola di Magia Lunaris</h1>
+<div id="createPGDiv">
+  <h2>Crea il tuo personaggio</h2>
+  <input type="text" id="newUsername" placeholder="Nome studente">
+  
+  <p>Scegli il tuo avatar:</p>
+  <button onclick="selectAvatar('🧙‍♂️')">🧙‍♂️</button>
+  <button onclick="selectAvatar('🧙‍♀️')">🧙‍♀️</button>
+  <button onclick="selectAvatar('🧝‍♂️')">🧝‍♂️</button>
+  
+  <button onclick="createPG()">Conferma PG</button>
+</div>
 
-  <div id="loginDiv">
-    <input type="text" id="username" placeholder="Nome studente">
-    <button onclick="login()">Login</button>
-  </div>
-
-  <div id="welcomeDiv" style="display:none;">
-    <p id="welcomeMessage"></p>
-    <button onclick="goToDorm()">Vai al tuo dormitorio</button>
-
-    <!-- Pannello personale -->
