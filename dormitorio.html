@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Dormitorio Lunaris</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>🏰 Dormitorio di Lunaris</h1>
+  <p id="message">Usa le frecce per muoverti 🡸🡺🡹🡻</p>
+
+  <div id="dormRoom">
+    <div id="player">🧙‍♂️</div>
+
+    <div class="object" style="top:50px; left:50px;" onclick="interact('Scrivania')">🪑</div>
+    <div class="object" style="top:200px; left:300px;" onclick="interact('Letto')">🛏️</div>
+    <div class="object" style="top:100px; left:500px;" onclick="interact('Libreria')">📚</div>
+  </div>
+
+  <script src="dorm.js"></script>
+</body>
+</html>
