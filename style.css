@@ -37,21 +37,7 @@ button:hover {
   color: #ffd700;
 }
 
-/* HUD */
-#hud {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-  gap: 20px;
-}
-
-#hud > div {
-  background-color: #1c1f3b;
-  padding: 15px;
-  border-radius: 10px;
-  width: 150px;
-}
-
+/* Avatar con etichetta */
 .avatarOptions {
   display: flex;
   justify-content: center;
@@ -80,4 +66,23 @@ button:hover {
   margin-top: 5px;
   font-size: 14px;
   color: #ffd700;
+}
+
+/* HUD */
+#hud {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  gap: 20px;
+}
+
+#hud > div {
+  background-color: #1c1f3b;
+  padding: 15px;
+  border-radius: 10px;
+  width: 150px;
+}
+
+#avatar {
+  font-size: 50px;
 }
