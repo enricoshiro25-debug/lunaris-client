@@ -1,10 +1,11 @@
 body {
-  background-color: #0b0f1a;
-  color: #eaeaea;
+  background-color: #000000; /* Sfondo nero */
+  color: #eaeaea;            /* Testo chiaro per contrasto */
   font-family: Arial, sans-serif;
   text-align: center;
   padding-top: 30px;
 }
+
 
 input {
   padding: 10px;
@@ -54,4 +55,5 @@ button:hover {
 #avatar {
   font-size: 50px;
 }
+
 
