@@ -1,20 +1,16 @@
-body {
-  background-color: #0b0f1a;
-  color: #eaeaea;
-  font-family: Arial, sans-serif;
-  text-align: center;
-  padding-top: 50px;
-}
-
-h1 {
-  color: #b48cff;
+input {
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: none;
+  margin-right: 10px;
 }
 
 button {
   background-color: #3a3f5c;
   color: #fff;
   border: none;
-  padding: 15px 25px;
+  padding: 12px 20px;
   margin: 10px;
   font-size: 16px;
   cursor: pointer;
@@ -26,9 +22,4 @@ button:hover {
   background-color: #5c5fe2;
 }
 
-.message {
-  margin-top: 30px;
-  font-size: 18px;
-  color: #ffd700;
-}
 
