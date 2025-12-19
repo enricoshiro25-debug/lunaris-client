@@ -1,12 +1,48 @@
-<div id="createPGDiv">
-  <h2>Crea il tuo personaggio</h2>
-  <input type="text" id="newUsername" placeholder="Nome studente">
-  
-  <p>Scegli il tuo avatar:</p>
-  <button onclick="selectAvatar('🧙‍♂️')">🧙‍♂️</button>
-  <button onclick="selectAvatar('🧙‍♀️')">🧙‍♀️</button>
-  <button onclick="selectAvatar('🧝‍♂️')">🧝‍♂️</button>
-  
-  <button onclick="createPG()">Conferma PG</button>
-</div>
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Scuola di Magia Lunaris</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>🧙‍♂️ Benvenuto alla Scuola di Magia Lunaris</h1>
 
+  <div id="createPGDiv">
+    <h2>Crea il tuo personaggio</h2>
+    <input type="text" id="newUsername" placeholder="Nome studente">
+    <p>Scegli il tuo avatar:</p>
+    <button onclick="selectAvatar('🧙‍♂️')">🧙‍♂️</button>
+    <button onclick="selectAvatar('🧙‍♀️')">🧙‍♀️</button>
+    <button onclick="selectAvatar('🧝‍♂️')">🧝‍♂️</button>
+    <button onclick="createPG()">Conferma PG</button>
+  </div>
+
+  <div id="welcomeDiv" style="display:none;">
+    <p id="welcomeMessage"></p>
+    <button onclick="goToDorm()">Vai al tuo dormitorio</button>
+
+    <!-- Pannello personale -->
+    <div id="hud">
+      <div id="pgBox">
+        <h3>Personaggio</h3>
+        <div id="avatar">🧙‍♂️</div>
+      </div>
+      <div id="infoBox">
+        <h3>Informazioni</h3>
+        <p>Nome: <span id="studentName"></span></p>
+        <p>Livello: <span id="level">1</span></p>
+        <p>Magia: <span id="magic">0</span></p>
+      </div>
+      <div id="settingsBox">
+        <h3>Impostazioni</h3>
+        <button onclick="changeAvatar()">Cambia avatar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="message" class="message"></div>
+
+  <script src="game.js"></script>
+</body>
+</html>
