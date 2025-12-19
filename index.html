@@ -6,9 +6,19 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>🧙‍♂️ Scuola di Magia Lunaris</h1>
-  <p>Benvenuto studente…</p>
+  <h1>🧙‍♂️ Benvenuto alla Scuola di Magia Lunaris</h1>
+  <p>Scegli dove vuoi andare oggi:</p>
+
+  <div class="menu">
+    <button onclick="enterRoom('Aula Incantesimi')">Aula Incantesimi</button>
+    <button onclick="enterRoom('Biblioteca')">Biblioteca</button>
+    <button onclick="enterRoom('Dormitorio')">Dormitorio</button>
+    <button onclick="enterRoom('Cortile')">Cortile</button>
+  </div>
+
+  <div id="roomMessage" class="message"></div>
 
   <script src="game.js"></script>
 </body>
 </html>
+
