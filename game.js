@@ -9,13 +9,11 @@ function selectAvatar(avatar, type) {
   }
 }
 
-// Mostra login
+// Mostra login / registrazione
 function showLogin() {
   document.getElementById('registerDiv').style.display = 'none';
   document.getElementById('loginDiv').style.display = 'block';
 }
-
-// Mostra registrazione
 function showRegister() {
   document.getElementById('loginDiv').style.display = 'none';
   document.getElementById('registerDiv').style.display = 'block';
@@ -24,13 +22,20 @@ function showRegister() {
 // Registrazione
 function register() {
   const username = document.getElementById('regUsername').value.trim();
-  if(username === '' || currentAvatar === '') {
-    alert('Inserisci un nome e scegli un avatar!');
+  const password = document.getElementById('regPassword').value;
+  if(username === '' || currentAvatar === '' || password === '') {
+    alert('Inserisci nome, password e scegli un avatar!');
     return;
   }
 
-  // Salva nel localStorage
-  const player = {name: username, avatar: currentAvatar};
+  // Controllo se l'utente esiste già
+  if(localStorage.getItem(username)) {
+    alert('Utente già registrato! Fai il login.');
+    return;
+  }
+
+  // Salva in localStorage
+  const player = {name: username, avatar: currentAvatar, password: password};
   localStorage.setItem(username, JSON.stringify(player));
   alert('Registrazione completata! Ora puoi fare il login.');
   showLogin();
@@ -39,8 +44,10 @@ function register() {
 // Login
 function login() {
   const username = document.getElementById('loginUsername').value.trim();
-  if(username === '') {
-    alert('Inserisci il tuo nome!');
+  const password = document.getElementById('loginPassword').value;
+
+  if(username === '' || password === '') {
+    alert('Inserisci nome e password!');
     return;
   }
 
@@ -51,11 +58,18 @@ function login() {
   }
 
   const player = JSON.parse(playerData);
+
+  if(player.password !== password) {
+    alert('Password errata!');
+    return;
+  }
+
   currentStudent = player.name;
   currentAvatar = player.avatar;
 
-  // Nascondi login, mostra HUD
+  // Mostra HUD
   document.getElementById('loginDiv').style.display = 'none';
+  document.getElementById('registerDiv').style.display = 'none';
   document.getElementById('welcomeDiv').style.display = 'block';
 
   document.getElementById('welcomeMessage').textContent = `Benvenuto ${currentStudent}!`;
@@ -69,7 +83,7 @@ function goToDorm() {
   messageDiv.textContent = `Sei entrato nel dormitorio di ${currentStudent} 🛏️✨`;
 }
 
-// Cambia avatar (solo HUD)
+// Cambia avatar
 function changeAvatar() {
   const avatarDiv = document.getElementById('avatar');
   const avatars = ['🧙‍♂️','🧙‍♀️','🧝‍♂️','🧝‍♀️','🧞‍♂️'];
