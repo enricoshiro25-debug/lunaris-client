@@ -7,21 +7,14 @@
 </head>
 <body>
   <h1>🧙‍♂️ Benvenuto alla Scuola di Magia Lunaris</h1>
-  <p id="welcomeMessage">Effettua il login per accedere al tuo dormitorio</p>
 
   <div id="loginDiv">
     <input type="text" id="username" placeholder="Nome studente">
     <button onclick="login()">Login</button>
   </div>
 
-  <div id="dormButtonDiv" style="display:none;">
+  <div id="welcomeDiv" style="display:none;">
+    <p id="welcomeMessage"></p>
     <button onclick="goToDorm()">Vai al tuo dormitorio</button>
-  </div>
 
-  <div id="message" class="message"></div>
-
-  <script src="game.js"></script>
-</body>
-</html>
-
-
+    <!-- Pannello personale -->
