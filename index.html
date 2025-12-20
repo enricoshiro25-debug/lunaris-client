@@ -24,7 +24,7 @@ h1 { margin-top: 20px; }
 /* Contenitore Avatar */
 #avatar-box {
   width: 128px;
-  height: 160px; /* spazio testa + corpo */
+  height: 144px; /* testa + corpo */
   position: relative;
   background: #111;
   border: 2px solid #666;
@@ -38,11 +38,11 @@ h1 { margin-top: 20px; }
 
 /* Vestito */
 #clothes {
-  width: 96px;        /* ridotto per stare proporzionato */
-  height: 96px;
+  width: 128px;
+  height: 80px;   /* corpo ridotto */
   position: absolute;
-  top: 64px;          /* posizione verticale sotto la testa */
-  left: 16px;         /* centrato orizzontalmente */
+  bottom: 0;       /* sempre in basso */
+  left: 0;
   z-index: 1;
 }
 
@@ -51,8 +51,8 @@ h1 { margin-top: 20px; }
   width: 64px;
   height: 64px;
   position: absolute;
-  top: 0;
-  left: 32px;
+  bottom: 80px;    /* sopra il vestito */
+  left: 32px;      /* centrata */
   z-index: 2;
 }
 
@@ -61,7 +61,7 @@ h1 { margin-top: 20px; }
   width: 64px;
   height: 64px;
   position: absolute;
-  top: -4px;          /* leggermente sopra la testa */
+  bottom: 80px;    /* stessa posizione della testa */
   left: 32px;
   z-index: 3;
 }
@@ -111,21 +111,21 @@ button { cursor: pointer; }
     <h3>Aspetto</h3>
 
     <label>Viso</label>
-    <select onchange="setAvatar('face', this.value)">
+    <select onchange="document.getElementById('face').src=this.value">
       <option value="images/base/face1.png">Face 1</option>
       <option value="images/base/face2.png">Face 2</option>
       <option value="images/base/face3.png">Face 3</option>
     </select>
 
     <label>Vestito</label>
-    <select onchange="setAvatar('clothes', this.value)">
+    <select onchange="document.getElementById('clothes').src=this.value">
       <option value="images/clothes/robe1.png">Robe 1</option>
       <option value="images/clothes/robe2.png">Robe 2</option>
       <option value="images/clothes/robe3.png">Robe 3</option>
     </select>
 
     <label>Capelli</label>
-    <select onchange="setAvatar('hair', this.value)">
+    <select onchange="document.getElementById('hair').src=this.value">
       <option value="images/hair/hair1.png">Hair 1</option>
       <option value="images/hair/hair2.png">Hair 2</option>
       <option value="images/hair/hair3.png">Hair 3</option>
