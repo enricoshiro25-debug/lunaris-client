@@ -1,5 +1,5 @@
 body {
-  background: #000;
+  background: #0a0a0a;
   color: #fff;
   font-family: Arial, sans-serif;
   text-align: center;
@@ -18,10 +18,10 @@ h1 { margin-top: 20px; }
 
 #avatar-box {
   width: 64px;
-  height: 96px; 
+  height: 96px;
   position: relative;
   background: #111;
-  border: 2px solid #666;
+  border: 2px solid #888;
 }
 
 .avatar-layer {
@@ -32,7 +32,6 @@ h1 { margin-top: 20px; }
 #clothes {
   width: 64px;
   height: 64px;
-  position: absolute;
   bottom: 0;
   left: 0;
   z-index: 1;
@@ -41,7 +40,6 @@ h1 { margin-top: 20px; }
 #face {
   width: 32px;
   height: 32px;
-  position: absolute;
   bottom: 64px;
   left: 16px;
   z-index: 2;
@@ -50,7 +48,6 @@ h1 { margin-top: 20px; }
 #hair {
   width: 32px;
   height: 32px;
-  position: absolute;
   bottom: 64px;
   left: 16px;
   z-index: 3;
