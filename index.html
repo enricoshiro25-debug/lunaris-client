@@ -1,94 +1,97 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <title>Scuola di Magia Lunaris</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>Scuola di Magia Lunaris</title>
+
+<style>
+body {
+  background: #000;
+  color: #fff;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+h1 {
+  margin-top: 20px;
+}
+
+#game {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-top: 30px;
+}
+
+/* AVATAR */
+#avatar-box {
+  width: 128px;
+  height: 128px;
+  position: relative;
+  background: #111;
+  border: 2px solid #555;
+}
+
+.avatar-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 128px;
+  height: 128px;
+  image-rendering: pixelated;
+}
+
+/* MENU */
+#controls {
+  background: #111;
+  padding: 15px;
+  border: 2px solid #555;
+}
+
+select {
+  width: 160px;
+  margin-bottom: 10px;
+}
+</style>
 </head>
+
 <body>
-  <h1>🧙‍♂️ Scuola di Magia Lunaris</h1>
 
-  <!-- Registrazione -->
-  <div id="registerDiv">
-    <h2>Registrazione</h2>
-    <input type="text" id="regUsername" placeholder="Nome studente">
-    <input type="password" id="regPassword" placeholder="Password">
+<h1>✨ Scuola di Magia Lunaris ✨</h1>
 
-    <h3>Crea il tuo avatar</h3>
-    <div id="avatarBuilder">
-      <div>
-        <label>Viso:</label>
-        <select id="faceSelect" onchange="updateAvatar()">
-          <option value="images/base/face1.png">Viso 1</option>
-          <option value="images/base/face2.png">Viso 2</option>
-          <option value="images/base/face3.png">Viso 3</option>
-        </select>
-      </div>
-      <div>
-        <label>Capelli:</label>
-        <select id="hairSelect" onchange="updateAvatar()">
-          <option value="images/hair/hair1.png">Capelli 1</option>
-          <option value="images/hair/hair2.png">Capelli 2</option>
-          <option value="images/hair/hair3.png">Capelli 3</option>
-        </select>
-      </div>
-      <div>
-        <label>Vestiti:</label>
-        <select id="clothesSelect" onchange="updateAvatar()">
-          <option value="images/clothes/clothes1.png">Vestiti 1</option>
-          <option value="images/clothes/clothes2.png">Vestiti 2</option>
-          <option value="images/clothes/clothes3.png">Vestiti 3</option>
-        </select>
-      </div>
-      <div>
-        <label>Accessori:</label>
-        <select id="accessorySelect" onchange="updateAvatar()">
-          <option value="">Nessuno</option>
-          <option value="images/accessories/hat1.png">Cappello</option>
-          <option value="images/accessories/glasses1.png">Occhiali</option>
-        </select>
-      </div>
+<div id="game">
 
-      <h3>Anteprima Avatar</h3>
-      <div id="avatarPreview" class="avatarPreview">
-        <img id="faceLayer">
-        <img id="hairLayer">
-        <img id="clothesLayer">
-        <img id="accessoryLayer">
-      </div>
-    </div>
-
-    <button onclick="register()">Registrati</button>
-    <p>Hai già un account? <button onclick="showLogin()">Login</button></p>
+  <!-- AVATAR -->
+  <div id="avatar-box">
+    <img id="face" class="avatar-layer" src="images/base/face1.png">
+    <img id="hair" class="avatar-layer" src="images/hair/hair1.png">
+    <img id="clothes" class="avatar-layer" src="images/clothes/robe1.png">
+    <img id="accessories" class="avatar-layer">
   </div>
 
-  <!-- Login -->
-  <div id="loginDiv" style="display:none;">
-    <h2>Login</h2>
-    <input type="text" id="loginUsername" placeholder="Nome studente">
-    <input type="password" id="loginPassword" placeholder="Password">
-    <button onclick="login()">Login</button>
-    <p>Non hai un account? <button onclick="showRegister()">Registrati</button></p>
-  </div>
+  <!-- CONTROLLI -->
+  <div id="controls">
+    <h3>Crea il tuo PG</h3>
 
-  <!-- HUD e welcome -->
-  <div id="welcomeDiv" style="display:none;">
-    <p id="welcomeMessage"></p>
-    <button onclick="goToDorm()">Vai al tuo dormitorio</button>
+    <label>Viso</label><br>
+    <select onchange="setAvatar('face', this.value)">
+      <option value="images/base/face1.png">Viso 1</option>
+      <option value="images/base/face2.png">Viso 2</option>
+    </select><br>
 
-    <div id="hud">
-      <div id="pgBox">
-        <h3>Personaggio</h3>
-        <div id="avatar"></div>
-      </div>
-      <div id="infoBox">
-        <h3>Informazioni</h3>
-        <p>Nome: <span id="studentName"></span></p>
-      </div>
-    </div>
-  </div>
+    <label>Capelli</label><br>
+    <select onchange="setAvatar('hair', this.value)">
+      <option value="images/hair/hair1.png">Capelli 1</option>
+      <option value="images/hair/hair2.png">Capelli 2</option>
+    </select><br>
 
-  <div id="message" class="message"></div>
-  <script src="game.js"></script>
-</body>
-</html>
+    <label>Vestiti</label><br>
+    <select onchange="setAvatar('clothes', this.value)">
+      <option value="images/clothes/robe1.png">Veste 1</option>
+      <option value="images/clothes/robe2.png">Veste 2</option>
+    </select><br>
+
+    <label>Accessori</label><br>
+    <select onchange="setAvatar('accessories', this.value)">
+      <option value="">Nessuno</option>
+      <option value="images/accessories/hat1.png">Cappello</option>
