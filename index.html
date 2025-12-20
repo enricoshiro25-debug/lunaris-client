@@ -13,15 +13,12 @@ body {
   margin: 0;
 }
 
-h1 {
-  margin-top: 20px;
-}
+h1 { margin-top: 20px; }
 
-/* CONTENITORE */
 #container {
   display: flex;
   justify-content: center;
-  gap: 40px;
+  gap: 30px;
   margin-top: 30px;
   flex-wrap: wrap;
 }
@@ -46,11 +43,10 @@ h1 {
 
 /* ordine layer */
 #clothes { z-index: 1; }
-#face { z-index: 2; }
-#hair { z-index: 3; }
-#accessories { z-index: 4; }
+#hair { z-index: 2; }
+#accessories { z-index: 3; }
 
-/* MENU */
+/* PANNELLI */
 .panel {
   background: #111;
   padding: 15px;
@@ -58,15 +54,13 @@ h1 {
   width: 220px;
 }
 
-select, input, button {
+input, button, select {
   width: 100%;
   margin-bottom: 8px;
-  padding: 5px;
+  padding: 6px;
 }
 
-button {
-  cursor: pointer;
-}
+button { cursor: pointer; }
 </style>
 </head>
 
@@ -76,87 +70,12 @@ button {
 
 <div id="container">
 
-  <!-- LOGIN / REGISTER -->
+  <!-- LOGIN -->
   <div class="panel">
     <h3>Account</h3>
-    <input type="text" id="username" placeholder="Nome utente">
-    <input type="password" id="password" placeholder="Password">
+    <input id="username" placeholder="Nome utente">
+    <input id="password" type="password" placeholder="Password">
     <button onclick="register()">Registrati</button>
-    <button onclick="login()">Login</button>
-    <p id="msg"></p>
-  </div>
-
-  <!-- AVATAR -->
-  <div>
-    <div id="avatar-box">
-     <img id="clothes" class="avatar-layer" src="images/clothes/robe1.png">
-<img id="face" class="avatar-layer" src="images/base/face1.png">
-<img id="hair" class="avatar-layer" src="images/hair/hair1.png">
-<img id="accessories" class="avatar-layer" src="">
-    </div>
-  </div>
-
-  <!-- CREAZIONE PG -->
-  <div class="panel">
-    <h3>Crea il tuo PG</h3>
-
-    <label>Viso</label>
-    <select onchange="setAvatar('face', this.value)">
-      <option value="images/base/face1.png">Viso 1</option>
-      <option value="images/base/face2.png">Viso 2</option>
-    </select>
-
-    <label>Capelli</label>
-    <select onchange="setAvatar('hair', this.value)">
-      <option value="images/hair/hair1.png">Capelli 1</option>
-      <option value="images/hair/hair2.png">Capelli 2</option>
-    </select>
-
-    <label>Vestiti</label>
-    <select onchange="setAvatar('clothes', this.value)">
-      <option value="images/clothes/robe1.png">Veste 1</option>
-      <option value="images/clothes/robe2.png">Veste 2</option>
-    </select>
-
-    <label>Accessori</label>
-    <select onchange="setAvatar('accessories', this.value)">
-      <option value="">Nessuno</option>
-      <option value="images/accessories/hat1.png">Cappello</option>
-    </select>
-  </div>
-
-</div>
-
-<script>
-function setAvatar(layer, src) {
-  document.getElementById(layer).src = src;
-}
-
-/* ACCOUNT (demo locale) */
-function register() {
-  const u = username.value;
-  const p = password.value;
-  if (!u || !p) {
-    msg.innerText = "Compila tutti i campi";
-    return;
-  }
-  localStorage.setItem("user_" + u, p);
-  msg.innerText = "Registrazione completata!";
-}
-
-function login() {
-  const u = username.value;
-  const p = password.value;
-  const saved = localStorage.getItem("user_" + u);
-  if (saved === p) {
-    msg.innerText = "Login riuscito! Benvenuto a Lunaris ✨";
-  } else {
-    msg.innerText = "Credenziali errate";
-  }
-}
-</script>
-
-</body>
-</html>
+    <button onclick="login()">Login</butt
 
 
