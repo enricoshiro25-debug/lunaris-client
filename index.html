@@ -11,7 +11,6 @@
 
 <div id="container">
 
-  <!-- LOGIN / REGISTER -->
   <div class="panel">
     <h3>Account</h3>
     <input id="username" placeholder="Nome utente">
@@ -21,7 +20,6 @@
     <p id="msg"></p>
   </div>
 
-  <!-- AVATAR -->
   <div>
     <div id="avatar-box">
       <img id="clothes" class="avatar-layer" src="images/clothes/robe1.png">
@@ -30,7 +28,6 @@
     </div>
   </div>
 
-  <!-- PERSONALIZZAZIONE -->
   <div class="panel">
     <h3>Aspetto</h3>
 
@@ -67,12 +64,10 @@ const clothes = document.getElementById('clothes');
 const face = document.getElementById('face');
 const hair = document.getElementById('hair');
 
-// Cambia immagine layer
 function setAvatar(layer, src) {
   document.getElementById(layer).src = src;
 }
 
-// Registrazione
 function register() {
   const u = username.value.trim();
   const p = password.value.trim();
@@ -90,7 +85,6 @@ function register() {
   msg.innerText = "Registrazione completata!";
 }
 
-// Login
 function login() {
   const u = username.value.trim();
   const p = password.value.trim();
