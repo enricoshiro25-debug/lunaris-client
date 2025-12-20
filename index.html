@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <title>Scuola di Magia Lunaris</title>
-
 <style>
 body {
   background: #000;
@@ -12,7 +11,6 @@ body {
   text-align: center;
   margin: 0;
 }
-
 h1 { margin-top: 20px; }
 
 #container {
@@ -23,10 +21,10 @@ h1 { margin-top: 20px; }
   flex-wrap: wrap;
 }
 
-/* AVATAR */
+/* Contenitore Avatar */
 #avatar-box {
   width: 128px;
-  height: 160px; /* spazio per testa + vestito */
+  height: 160px; /* spazio testa + corpo */
   position: relative;
   background: #111;
   border: 2px solid #666;
@@ -38,54 +36,51 @@ h1 { margin-top: 20px; }
   image-rendering: pixelated;
 }
 
-/* Vestito pieno */
+/* Vestito */
 #clothes {
-  width: 128px;
-  height: 128px;
+  width: 96px;        /* ridotto per stare proporzionato */
+  height: 96px;
   position: absolute;
-  top: 32px; /* lascia spazio per la testa */
-  left: 0;
+  top: 64px;          /* posizione verticale sotto la testa */
+  left: 16px;         /* centrato orizzontalmente */
   z-index: 1;
 }
 
-/* Testa sopra il vestito */
+/* Testa */
 #face {
   width: 64px;
   height: 64px;
   position: absolute;
   top: 0;
-  left: 32px; /* centrata */
+  left: 32px;
   z-index: 2;
 }
 
-/* Capelli sopra la testa */
+/* Capelli */
 #hair {
   width: 64px;
   height: 64px;
   position: absolute;
-  top: -4px; /* leggermente sopra la testa */
+  top: -4px;          /* leggermente sopra la testa */
   left: 32px;
   z-index: 3;
 }
 
-/* PANNELLI */
+/* Pannelli */
 .panel {
   background: #111;
   padding: 15px;
   border: 2px solid #555;
   width: 220px;
 }
-
 input, button, select {
   width: 100%;
   margin-bottom: 8px;
   padding: 6px;
 }
-
 button { cursor: pointer; }
 </style>
 </head>
-
 <body>
 
 <h1>✨ Scuola di Magia Lunaris ✨</h1>
