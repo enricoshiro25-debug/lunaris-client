@@ -18,7 +18,7 @@ h1 { margin-top: 20px; }
 
 #avatar-box {
   width: 64px;
-  height: 96px; /* testa + corpo */
+  height: 96px; 
   position: relative;
   background: #111;
   border: 2px solid #666;
