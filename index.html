@@ -109,67 +109,64 @@ button { cursor: pointer; }
 </div>
 
 <script>
-// Riferimenti agli elementi
-const username = document.getElementById('username');
-const password = document.getElementById('password');
-const msg = document.getElementById('msg');
-const clothes = document.getElementById('clothes');
-const hair = document.getElementById('hair');
-const accessories = document.getElementById('accessories');
+document.addEventListener("DOMContentLoaded", function() {
+  const username = document.getElementById('username');
+  const password = document.getElementById('password');
+  const msg = document.getElementById('msg');
+  const clothes = document.getElementById('clothes');
+  const hair = document.getElementById('hair');
+  const accessories = document.getElementById('accessories');
 
-// Cambio avatar
-function setAvatar(layer, src) {
-  document.getElementById(layer).src = src;
-}
-
-// Registrazione
-function register() {
-  const u = username.value.trim();
-  const p = password.value.trim();
-  if (!u || !p) {
-    msg.innerText = "Compila tutti i campi";
-    return;
+  window.setAvatar = function(layer, src) {
+    document.getElementById(layer).src = src;
   }
 
-  if (localStorage.getItem("user_" + u)) {
-    msg.innerText = "Utente già registrato";
-    return;
+  window.register = function() {
+    const u = username.value.trim();
+    const p = password.value.trim();
+    if (!u || !p) {
+      msg.innerText = "Compila tutti i campi";
+      return;
+    }
+    if (localStorage.getItem("user_" + u)) {
+      msg.innerText = "Utente già registrato";
+      return;
+    }
+
+    const userData = {
+      password: p,
+      clothes: "images/clothes/base.png",
+      hair: "images/hair/head_male.png",
+      accessories: ""
+    };
+
+    localStorage.setItem("user_" + u, JSON.stringify(userData));
+    msg.innerText = "Registrazione completata!";
   }
 
-  const userData = {
-    password: p,
-    clothes: "images/clothes/base.png",
-    hair: "images/hair/head_male.png",
-    accessories: ""
-  };
+  window.login = function() {
+    const u = username.value.trim();
+    const p = password.value.trim();
+    const data = localStorage.getItem("user_" + u);
 
-  localStorage.setItem("user_" + u, JSON.stringify(userData));
-  msg.innerText = "Registrazione completata!";
-}
+    if (!data) {
+      msg.innerText = "Utente non trovato";
+      return;
+    }
 
-// Login
-function login() {
-  const u = username.value.trim();
-  const p = password.value.trim();
-  const data = localStorage.getItem("user_" + u);
+    const user = JSON.parse(data);
+    if (user.password !== p) {
+      msg.innerText = "Password errata";
+      return;
+    }
 
-  if (!data) {
-    msg.innerText = "Utente non trovato";
-    return;
+    clothes.src = user.clothes;
+    hair.src = user.hair;
+    accessories.src = user.accessories;
+
+    msg.innerText = "Benvenuto a Lunaris ✨";
   }
-
-  const user = JSON.parse(data);
-  if (user.password !== p) {
-    msg.innerText = "Password errata";
-    return;
-  }
-
-  clothes.src = user.clothes;
-  hair.src = user.hair;
-  accessories.src = user.accessories;
-
-  msg.innerText = "Benvenuto a Lunaris ✨";
-}
+});
 </script>
 
 </body>
