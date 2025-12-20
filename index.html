@@ -43,8 +43,8 @@ h1 { margin-top: 20px; }
 
 /* ordine layer */
 #clothes { z-index: 1; }
-#hair { z-index: 2; }
-#accessories { z-index: 3; }
+#face { z-index: 2; }
+#hair { z-index: 3; }
 
 /* PANNELLI */
 .panel {
@@ -83,9 +83,9 @@ button { cursor: pointer; }
   <!-- AVATAR -->
   <div>
     <div id="avatar-box">
-      <img id="clothes" class="avatar-layer" src="images/clothes/base.png">
-      <img id="hair" class="avatar-layer" src="images/hair/head_male.png">
-      <img id="accessories" class="avatar-layer" src="">
+      <img id="clothes" class="avatar-layer" src="images/clothes/robe1.png">
+      <img id="face" class="avatar-layer" src="images/base/face1.png">
+      <img id="hair" class="avatar-layer" src="images/hair/hair1.png">
     </div>
   </div>
 
@@ -93,16 +93,25 @@ button { cursor: pointer; }
   <div class="panel">
     <h3>Aspetto</h3>
 
-    <label>Capelli / Testa</label>
-    <select onchange="setAvatar('hair', this.value)">
-      <option value="images/hair/head_male.png">Uomo</option>
-      <option value="images/hair/head_female.png">Donna</option>
+    <label>Viso</label>
+    <select onchange="setAvatar('face', this.value)">
+      <option value="images/base/face1.png">Face 1</option>
+      <option value="images/base/face2.png">Face 2</option>
+      <option value="images/base/face3.png">Face 3</option>
     </select>
 
-    <label>Accessori</label>
-    <select onchange="setAvatar('accessories', this.value)">
-      <option value="">Nessuno</option>
-      <option value="images/accessories/hat1.png">Cappello</option>
+    <label>Vestito</label>
+    <select onchange="setAvatar('clothes', this.value)">
+      <option value="images/clothes/robe1.png">Robe 1</option>
+      <option value="images/clothes/robe2.png">Robe 2</option>
+      <option value="images/clothes/robe3.png">Robe 3</option>
+    </select>
+
+    <label>Capelli</label>
+    <select onchange="setAvatar('hair', this.value)">
+      <option value="images/hair/hair1.png">Hair 1</option>
+      <option value="images/hair/hair2.png">Hair 2</option>
+      <option value="images/hair/hair3.png">Hair 3</option>
     </select>
   </div>
 
@@ -114,8 +123,8 @@ document.addEventListener("DOMContentLoaded", function() {
   const password = document.getElementById('password');
   const msg = document.getElementById('msg');
   const clothes = document.getElementById('clothes');
+  const face = document.getElementById('face');
   const hair = document.getElementById('hair');
-  const accessories = document.getElementById('accessories');
 
   window.setAvatar = function(layer, src) {
     document.getElementById(layer).src = src;
@@ -135,9 +144,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
     const userData = {
       password: p,
-      clothes: "images/clothes/base.png",
-      hair: "images/hair/head_male.png",
-      accessories: ""
+      clothes: "images/clothes/robe1.png",
+      face: "images/base/face1.png",
+      hair: "images/hair/hair1.png"
     };
 
     localStorage.setItem("user_" + u, JSON.stringify(userData));
@@ -161,8 +170,8 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     clothes.src = user.clothes;
+    face.src = user.face;
     hair.src = user.hair;
-    accessories.src = user.accessories;
 
     msg.innerText = "Benvenuto a Lunaris ✨";
   }
