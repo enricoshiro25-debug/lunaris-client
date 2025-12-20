@@ -70,12 +70,107 @@ button { cursor: pointer; }
 
 <div id="container">
 
-  <!-- LOGIN -->
+  <!-- LOGIN / REGISTER -->
   <div class="panel">
     <h3>Account</h3>
     <input id="username" placeholder="Nome utente">
     <input id="password" type="password" placeholder="Password">
     <button onclick="register()">Registrati</button>
-    <button onclick="login()">Login</butt
+    <button onclick="login()">Login</button>
+    <p id="msg"></p>
+  </div>
 
+  <!-- AVATAR -->
+  <div>
+    <div id="avatar-box">
+      <img id="clothes" class="avatar-layer" src="images/clothes/base.png">
+      <img id="hair" class="avatar-layer" src="images/hair/head_male.png">
+      <img id="accessories" class="avatar-layer" src="">
+    </div>
+  </div>
 
+  <!-- PERSONALIZZAZIONE -->
+  <div class="panel">
+    <h3>Aspetto</h3>
+
+    <label>Capelli / Testa</label>
+    <select onchange="setAvatar('hair', this.value)">
+      <option value="images/hair/head_male.png">Uomo</option>
+      <option value="images/hair/head_female.png">Donna</option>
+    </select>
+
+    <label>Accessori</label>
+    <select onchange="setAvatar('accessories', this.value)">
+      <option value="">Nessuno</option>
+      <option value="images/accessories/hat1.png">Cappello</option>
+    </select>
+  </div>
+
+</div>
+
+<script>
+// Riferimenti agli elementi
+const username = document.getElementById('username');
+const password = document.getElementById('password');
+const msg = document.getElementById('msg');
+const clothes = document.getElementById('clothes');
+const hair = document.getElementById('hair');
+const accessories = document.getElementById('accessories');
+
+// Cambio avatar
+function setAvatar(layer, src) {
+  document.getElementById(layer).src = src;
+}
+
+// Registrazione
+function register() {
+  const u = username.value.trim();
+  const p = password.value.trim();
+  if (!u || !p) {
+    msg.innerText = "Compila tutti i campi";
+    return;
+  }
+
+  if (localStorage.getItem("user_" + u)) {
+    msg.innerText = "Utente già registrato";
+    return;
+  }
+
+  const userData = {
+    password: p,
+    clothes: "images/clothes/base.png",
+    hair: "images/hair/head_male.png",
+    accessories: ""
+  };
+
+  localStorage.setItem("user_" + u, JSON.stringify(userData));
+  msg.innerText = "Registrazione completata!";
+}
+
+// Login
+function login() {
+  const u = username.value.trim();
+  const p = password.value.trim();
+  const data = localStorage.getItem("user_" + u);
+
+  if (!data) {
+    msg.innerText = "Utente non trovato";
+    return;
+  }
+
+  const user = JSON.parse(data);
+  if (user.password !== p) {
+    msg.innerText = "Password errata";
+    return;
+  }
+
+  clothes.src = user.clothes;
+  hair.src = user.hair;
+  accessories.src = user.accessories;
+
+  msg.innerText = "Benvenuto a Lunaris ✨";
+}
+</script>
+
+</body>
+</html>
