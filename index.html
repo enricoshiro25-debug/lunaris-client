@@ -144,25 +144,22 @@ document.addEventListener("DOMContentLoaded", function() {
   const username = document.getElementById('username');
   const password = document.getElementById('password');
   const msg = document.getElementById('msg');
+
   const clothes = document.getElementById('clothes');
   const face = document.getElementById('face');
   const hair = document.getElementById('hair');
 
+  // Cambia immagine layer
   window.setAvatar = function(layer, src) {
     document.getElementById(layer).src = src;
   }
 
+  // Registrazione
   window.register = function() {
     const u = username.value.trim();
     const p = password.value.trim();
-    if (!u || !p) {
-      msg.innerText = "Compila tutti i campi";
-      return;
-    }
-    if (localStorage.getItem("user_" + u)) {
-      msg.innerText = "Utente già registrato";
-      return;
-    }
+    if (!u || !p) { msg.innerText = "Compila tutti i campi"; return; }
+    if (localStorage.getItem("user_" + u)) { msg.innerText = "Utente già registrato"; return; }
 
     const userData = {
       password: p,
@@ -175,21 +172,16 @@ document.addEventListener("DOMContentLoaded", function() {
     msg.innerText = "Registrazione completata!";
   }
 
+  // Login
   window.login = function() {
     const u = username.value.trim();
     const p = password.value.trim();
     const data = localStorage.getItem("user_" + u);
 
-    if (!data) {
-      msg.innerText = "Utente non trovato";
-      return;
-    }
+    if (!data) { msg.innerText = "Utente non trovato"; return; }
 
     const user = JSON.parse(data);
-    if (user.password !== p) {
-      msg.innerText = "Password errata";
-      return;
-    }
+    if (user.password !== p) { msg.innerText = "Password errata"; return; }
 
     clothes.src = user.clothes;
     face.src = user.face;
