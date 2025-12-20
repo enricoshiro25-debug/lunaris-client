@@ -16,47 +16,42 @@ h1 { margin-top: 20px; }
   flex-wrap: wrap;
 }
 
-/* Contenitore Avatar */
 #avatar-box {
-  width: 64px;        /* larghezza totale avatar */
-  height: 96px;       /* altezza totale avatar (corpo + testa) */
+  width: 64px;
+  height: 96px; /* testa + corpo */
   position: relative;
   background: #111;
   border: 2px solid #666;
 }
 
-/* Layer avatar */
 .avatar-layer {
   position: absolute;
   image-rendering: pixelated;
 }
 
-/* Vestito */
 #clothes {
   width: 64px;
   height: 64px;
   position: absolute;
-  bottom: 0;          /* allineato al fondo */
+  bottom: 0;
   left: 0;
   z-index: 1;
 }
 
-/* Testa */
 #face {
   width: 32px;
   height: 32px;
   position: absolute;
-  bottom: 52px;       /* regola questo valore per avvicinare la testa al corpo */
+  bottom: 64px;
   left: 16px;
   z-index: 2;
 }
 
-/* Capelli */
 #hair {
   width: 32px;
   height: 32px;
   position: absolute;
-  bottom: 52px;       /* stesso offset della testa */
+  bottom: 64px;
   left: 16px;
   z-index: 3;
 }
