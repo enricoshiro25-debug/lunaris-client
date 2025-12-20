@@ -32,19 +32,38 @@ h1 { margin-top: 20px; }
   border: 2px solid #666;
 }
 
+/* Layer avatar */
 .avatar-layer {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 128px;
-  height: 128px;
   image-rendering: pixelated;
 }
 
-/* ordine layer */
-#clothes { z-index: 1; }
-#face { z-index: 2; }
-#hair { z-index: 3; }
+/* Vestito pieno */
+#clothes {
+  width: 128px;
+  height: 128px;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+/* Faccia più piccola centrata */
+#face {
+  width: 64px;
+  height: 64px;
+  top: 16px;
+  left: 32px;
+  z-index: 2;
+}
+
+/* Capelli allineati al viso */
+#hair {
+  width: 64px;
+  height: 64px;
+  top: 16px;
+  left: 32px;
+  z-index: 3;
+}
 
 /* PANNELLI */
 .panel {
