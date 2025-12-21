@@ -1,12 +1,7 @@
-body {
-  background: black;
-  font-family: Arial, sans-serif;
-}
-
 #avatar {
   position: relative;
   width: 64px;
-  height: 96px;  /* 64 vestito + 32 capelli */
+  height: 96px;  /* vestito + testa + capelli */
   margin: 40px auto;
 }
 
@@ -16,7 +11,7 @@ body {
   bottom: 0;
   left: 0;
   width: 64px;
-  height: 64px;
+  height: 48px;
   z-index: 1;
   image-rendering: pixelated;
 }
@@ -24,7 +19,7 @@ body {
 /* Faccia */
 #face {
   position: absolute;
-  bottom: 32px;  /* sopra il vestito */
+  bottom: 48px;  /* sopra il vestito */
   left: 0;
   width: 64px;
   height: 64px;
@@ -35,10 +30,10 @@ body {
 /* Capelli */
 #hair {
   position: absolute;
-  bottom: 64px;  /* sopra la faccia */
+  bottom: 96px;  /* sopra la faccia */
   left: 0;
   width: 64px;
-  height: 32px;  /* altezza ridotta */
+  height: 32px;  /* solo capelli */
   z-index: 3;
   image-rendering: pixelated;
 }
