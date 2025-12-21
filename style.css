@@ -1,0 +1,22 @@
+body {
+  background: black;
+  color: white;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+#avatar {
+  position: relative;
+  width: 128px;
+  height: 128px;
+  margin: 40px auto;
+}
+
+#avatar img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 128px;
+  height: 128px;
+  image-rendering: pixelated;
+}
