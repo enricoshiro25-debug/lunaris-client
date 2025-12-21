@@ -5,29 +5,41 @@ body {
 
 #avatar {
   position: relative;
-  width: 96px;   /* dimensione finale avatar */
-  height: 128px; /* altezza avatar */
+  width: 96px;    /* larghezza totale avatar */
+  height: 128px;  /* altezza totale avatar */
   margin: 40px auto;
 }
 
-#avatar img {
+/* Vestito */
+#robe {
   position: absolute;
-  top: 0;
+  bottom: 0;       /* il vestito tocca il fondo */
   left: 0;
-  width: 96px;
-  height: auto;
+  width: 96px;     /* stessa larghezza del contenitore */
+  height: 64px;    /* altezza proporzionata */
+  z-index: 1;
   image-rendering: pixelated;
 }
 
-#robe {
-  z-index: 1;   /* dietro */
-}
-
+/* Faccia */
 #face {
-  z-index: 2;   /* davanti al vestito */
+  position: absolute;
+  top: 0;
+  left: 16px;      /* centra la faccia rispetto al vestito */
+  width: 64px;
+  height: 64px;
+  z-index: 2;
+  image-rendering: pixelated;
 }
 
+/* Capelli */
 #hair {
-  z-index: 3;   /* davanti a tutto */
+  position: absolute;
+  top: -8px;       /* leggermente sopra la faccia */
+  left: 8px;       /* centra i capelli rispetto alla faccia */
+  width: 80px;     /* leggermente più larghi della faccia */
+  height: auto;
+  z-index: 3;
+  image-rendering: pixelated;
 }
 
