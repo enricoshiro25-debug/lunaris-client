@@ -1,14 +1,20 @@
 const express = require("express");
 const app = express();
 
-// middleware
+// ======================
+// MIDDLEWARE
+// ======================
 app.use(express.static("public"));
 app.use(express.json());
 
-// database temporaneo
+// ======================
+// DATABASE TEMPORANEO
+// ======================
 const users = [];
 
+// ======================
 // REGISTRAZIONE
+// ======================
 app.post("/register", (req, res) => {
   const { username, password } = req.body;
 
@@ -27,11 +33,33 @@ app.post("/register", (req, res) => {
   res.send("Registrazione completata!");
 });
 
-// TEST ROUTE (IMPORTANTE)
+// ======================
+// LOGIN
+// ======================
+app.post("/login", (req, res) => {
+  const { username, password } = req.body;
+
+  const user = users.find(
+    u => u.username === username && u.password === password
+  );
+
+  if (!user) {
+    return res.status(401).send("Credenziali non valide");
+  }
+
+  res.send("Login effettuato!");
+});
+
+// ======================
+// TEST SERVER
+// ======================
 app.get("/test", (req, res) => {
   res.send("Server OK");
 });
 
+// ======================
+// AVVIO SERVER
+// ======================
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log("Server avviato sulla porta " + PORT);
