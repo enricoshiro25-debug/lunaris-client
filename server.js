@@ -1,12 +1,14 @@
 const express = require("express");
 const app = express();
 
+// middleware
 app.use(express.static("public"));
 app.use(express.json());
 
-// finto database (per ora)
+// database temporaneo
 const users = [];
 
+// REGISTRAZIONE
 app.post("/register", (req, res) => {
   const { username, password } = req.body;
 
@@ -20,11 +22,17 @@ app.post("/register", (req, res) => {
   }
 
   users.push({ username, password });
-  console.log("Utenti:", users);
+  console.log("Utenti registrati:", users);
 
   res.send("Registrazione completata!");
 });
 
-app.listen(process.env.PORT || 3000, () => {
-  console.log("Server avviato");
+// TEST ROUTE (IMPORTANTE)
+app.get("/test", (req, res) => {
+  res.send("Server OK");
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log("Server avviato sulla porta " + PORT);
 });
