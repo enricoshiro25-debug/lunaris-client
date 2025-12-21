@@ -31,20 +31,19 @@ document.getElementById("loginForm").addEventListener("submit", function(e) {
   const username = document.getElementById("username").value;
   const password = document.getElementById("password").value;
 
-  fetch("/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username, password })
-  })
-  .then(async res => {
-    const msg = await res.text();
-    if (!res.ok) {
-      alert(msg);
-      return;
-    }
-    localStorage.setItem("username", username);
-    window.location.href = "dashboard.html";
-  });
+  const saved = JSON.parse(localStorage.getItem("users")) || [];
+
+  const user = saved.find(
+    u => u.username === username && u.password === password
+  );
+
+  if (!user) {
+    alert("Credenziali non valide");
+    return;
+  }
+
+  localStorage.setItem("username", username);
+  window.location.href = "dashboard.html";
 });
 </script>
 
