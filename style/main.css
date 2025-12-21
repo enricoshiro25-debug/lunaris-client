@@ -55,16 +55,16 @@ button:hover {
 
 .map-container {
   display: grid;
-  grid-template-columns: repeat(10, 32px);
-  grid-template-rows: repeat(10, 32px);
-  gap: 1px;
+  grid-template-columns: repeat(10, 48px);
+  grid-template-rows: repeat(10, 48px);
+  gap: 2px;
   margin: 20px auto;
   width: fit-content;
 }
 
 .cell {
-  width: 32px;
-  height: 32px;
+  width: 48px;
+  height: 48px;
   border: 1px solid #333;
   box-sizing: border-box;
 }
@@ -72,3 +72,4 @@ button:hover {
 .wall { background: #444; }
 .floor { background: #111; }
 .player { background: #6b3fa0; }
+.npc { background: #ffcc00; }
