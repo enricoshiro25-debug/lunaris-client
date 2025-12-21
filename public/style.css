@@ -22,7 +22,7 @@ body {
   image-rendering: pixelated;
 }
 
-/* Testa (con capelli già inclusi) */
+/* Testa (con capelli inclusi) */
 #face {
   position: absolute;
   bottom: 60px;
@@ -32,3 +32,12 @@ body {
   image-rendering: pixelated;
 }
 
+.controls {
+  margin-top: 20px;
+}
+
+button {
+  padding: 6px 10px;
+  margin: 4px;
+  cursor: pointer;
+}
