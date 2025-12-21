@@ -1,8 +1,29 @@
 <!DOCTYPE html>
-<html>
-<body style="background:black; color:white;">
-  <h1>Test Render</h1>
-  <img src="/test.png">
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Lunaris – Selezione Avatar</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1 style="color:white; text-align:center;">Seleziona il tuo Avatar</h1>
+
+<div id="avatar">
+  <img id="robe" src="/images/avatars/robe/robe1.png">
+  <img id="face" src="/images/avatars/face/face1.png">
+  <img id="hair" src="/images/avatars/hair/hair1.png">
+</div>
+
+<div style="text-align:center; margin-top:20px;">
+  <button onclick="prevFace()">← Face</button>
+  <button onclick="nextFace()">Face →</button>
+  <button onclick="prevHair()">← Hair</button>
+  <button onclick="nextHair()">Hair →</button>
+  <button onclick="prevRobe()">← Robe</button>
+  <button onclick="nextRobe()">Robe →</button>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
-
