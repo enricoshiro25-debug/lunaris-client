@@ -11,11 +11,13 @@
 
   <h1>Benvenuto, <span id="user"></span></h1>
 
+  <!-- AVATAR -->
   <div id="avatar">
     <img id="robe" src="/images/avatars/robe/robe1.png">
     <img id="face" src="/images/avatars/face/face1.png">
   </div>
 
+  <!-- CONTROLLI AVATAR -->
   <div class="avatar-controls">
     <div>
       <button onclick="prevFace()">←</button>
@@ -30,9 +32,14 @@
     </div>
   </div>
 
+  <!-- AZIONI -->
   <div class="buttons">
-    <button class="btn">Entra nel Castello</button>
-    <button class="btn secondary" id="logout">Logout</button>
+    <button class="btn" onclick="window.location.href='castle.html'">
+      Entra nel Castello
+    </button>
+    <button class="btn secondary" id="logout">
+      Logout
+    </button>
   </div>
 
 </div>
@@ -40,3 +47,4 @@
 <script src="dashboard.js"></script>
 </body>
 </html>
+
