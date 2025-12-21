@@ -1,7 +1,7 @@
 const username = localStorage.getItem("username");
 if (!username) window.location.href = "login.html";
 
-// carica avatar salvato
+// ===== AVATAR =====
 const avatar = JSON.parse(
   localStorage.getItem("avatar_" + username)
 );
@@ -15,21 +15,31 @@ document.getElementById("face").src =
 document.getElementById("robe").src =
   "/images/avatars/robe/" + robes[avatar?.robe ?? 0];
 
-const player = document.getElementById("player");
+// ===== GRIGLIA =====
+const TILE = 40;
 const room = document.getElementById("room");
+const player = document.getElementById("player");
 
-// posizione iniziale
-let x = 280;
-let y = 300;
-player.style.left = x + "px";
-player.style.top = y + "px";
+// posizione in griglia
+let gridX = 7;
+let gridY = 6;
 
-// movimento con click
+function updatePlayerPosition() {
+  player.style.left = gridX * TILE + "px";
+  player.style.top = gridY * TILE - 60 + "px";
+}
+
+// click su una casella
 room.addEventListener("click", e => {
   const rect = room.getBoundingClientRect();
-  x = e.clientX - rect.left - 40;
-  y = e.clientY - rect.top - 70;
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
 
-  player.style.left = x + "px";
-  player.style.top = y + "px";
+  gridX = Math.floor(x / TILE);
+  gridY = Math.floor(y / TILE);
+
+  updatePlayerPosition();
 });
+
+// iniziale
+updatePlayerPosition();
