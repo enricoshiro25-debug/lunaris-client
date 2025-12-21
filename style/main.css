@@ -52,3 +52,23 @@ button:hover {
   top: 8px;
   z-index: 4;
 }
+
+.map-container {
+  display: grid;
+  grid-template-columns: repeat(10, 32px);
+  grid-template-rows: repeat(10, 32px);
+  gap: 1px;
+  margin: 20px auto;
+  width: fit-content;
+}
+
+.cell {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #333;
+  box-sizing: border-box;
+}
+
+.wall { background: #444; }
+.floor { background: #111; }
+.player { background: #6b3fa0; }
