@@ -1,7 +1,12 @@
+body {
+  background: black;
+  font-family: Arial, sans-serif;
+}
+
 #avatar {
   position: relative;
   width: 64px;
-  height: 96px;  /* vestito + testa + capelli */
+  height: 96px;
   margin: 40px auto;
 }
 
@@ -19,7 +24,7 @@
 /* Faccia */
 #face {
   position: absolute;
-  bottom: 48px;  /* sopra il vestito */
+  bottom: 48px;
   left: 0;
   width: 64px;
   height: 64px;
@@ -30,11 +35,10 @@
 /* Capelli */
 #hair {
   position: absolute;
-  bottom: 96px;  /* sopra la faccia */
+  bottom: 96px;
   left: 0;
   width: 64px;
-  height: 32px;  /* solo capelli */
+  height: 32px;
   z-index: 3;
   image-rendering: pixelated;
 }
-
