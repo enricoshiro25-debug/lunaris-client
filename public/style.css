@@ -1,12 +1,14 @@
 body {
-  background: black;
+  background: #111;
+  color: white;
   font-family: Arial, sans-serif;
+  text-align: center;
 }
 
 #avatar {
   position: relative;
-  width: 64px;
-  height: 96px;
+  width: 80px;
+  height: 140px;
   margin: 40px auto;
 }
 
@@ -15,30 +17,18 @@ body {
   position: absolute;
   bottom: 0;
   left: 0;
-  width: 64px;
-  height: 48px;
+  width: 80px;
   z-index: 1;
   image-rendering: pixelated;
 }
 
-/* Faccia */
+/* Testa (con capelli già inclusi) */
 #face {
   position: absolute;
-  bottom: 48px;
-  left: 0;
+  bottom: 60px;
+  left: 8px;
   width: 64px;
-  height: 64px;
   z-index: 2;
   image-rendering: pixelated;
 }
 
-/* Capelli */
-#hair {
-  position: absolute;
-  bottom: 96px;
-  left: 0;
-  width: 64px;
-  height: 32px;
-  z-index: 3;
-  image-rendering: pixelated;
-}
