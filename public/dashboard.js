@@ -6,12 +6,27 @@ if (!username) {
 
 document.getElementById("user").textContent = username;
 
-// LISTE AVATAR
-let faceIndex = 0;
-let robeIndex = 0;
-
+// ===== AVATAR DATA =====
 const faces = ["face1.png", "face2.png", "face3.png"];
 const robes = ["robe1.png", "robe2.png", "robe3.png"];
+
+// carica avatar salvato o default
+let savedAvatar = JSON.parse(
+  localStorage.getItem("avatar_" + username)
+);
+
+let faceIndex = savedAvatar?.face ?? 0;
+let robeIndex = savedAvatar?.robe ?? 0;
+
+function saveAvatar() {
+  localStorage.setItem(
+    "avatar_" + username,
+    JSON.stringify({
+      face: faceIndex,
+      robe: robeIndex
+    })
+  );
+}
 
 function updateAvatar() {
   document.getElementById("face").src =
@@ -19,9 +34,11 @@ function updateAvatar() {
 
   document.getElementById("robe").src =
     "/images/avatars/robe/" + robes[robeIndex];
+
+  saveAvatar();
 }
 
-// CONTROLLI TESTA
+// ===== CONTROLLI =====
 function nextFace() {
   faceIndex = (faceIndex + 1) % faces.length;
   updateAvatar();
@@ -32,7 +49,6 @@ function prevFace() {
   updateAvatar();
 }
 
-// CONTROLLI VESTITO
 function nextRobe() {
   robeIndex = (robeIndex + 1) % robes.length;
   updateAvatar();
@@ -43,7 +59,7 @@ function prevRobe() {
   updateAvatar();
 }
 
-// LOGOUT
+// ===== LOGOUT =====
 document.getElementById("logout").addEventListener("click", () => {
   localStorage.removeItem("username");
   window.location.href = "index.html";
