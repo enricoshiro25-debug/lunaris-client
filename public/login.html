@@ -19,7 +19,7 @@
   </form>
 
   <p style="margin-top:15px;">
-    <a href="index.html" class="link">← Torna al benvenuto</a>
+    <a href="index.html">← Torna al benvenuto</a>
   </p>
 
 </div>
@@ -38,17 +38,12 @@ document.getElementById("loginForm").addEventListener("submit", function(e) {
   })
   .then(async res => {
     const msg = await res.text();
-
     if (!res.ok) {
       alert(msg);
       return;
     }
-
-    alert("Login effettuato!");
+    localStorage.setItem("username", username);
     window.location.href = "dashboard.html";
-  })
-  .catch(() => {
-    alert("Errore di connessione al server");
   });
 });
 </script>
