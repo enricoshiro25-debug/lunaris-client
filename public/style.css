@@ -20,45 +20,32 @@ body {
 }
 
 h1 {
-  font-size: 32px;
   margin-bottom: 20px;
-  color: #d6d6ff;
 }
 
-.story {
-  font-size: 16px;
-  line-height: 1.6;
-  margin-bottom: 30px;
-  color: #cfcfff;
-}
-
-.buttons {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
+input {
+  width: 90%;
+  padding: 10px;
+  margin: 8px 0;
+  border-radius: 6px;
+  border: none;
 }
 
 .btn {
   padding: 12px 24px;
-  text-decoration: none;
-  color: #ffffff;
+  margin: 10px;
   background: #5a5aff;
+  color: white;
+  border: none;
   border-radius: 8px;
   font-weight: bold;
-  transition: 0.2s;
-}
-
-.btn:hover {
-  background: #7a7aff;
+  cursor: pointer;
 }
 
 .btn.secondary {
   background: #2f2f5a;
 }
 
-.btn.secondary:hover {
-  background: #444488;
-}
 #avatar {
   position: relative;
   width: 80px;
