@@ -25,24 +25,24 @@
 </div>
 
 <script>
-document.getElementById("registerForm").addEventListener("submit", async (e) => {
+document.getElementById("registerForm").addEventListener("submit", function(e) {
   e.preventDefault();
 
   const username = document.getElementById("username").value;
   const password = document.getElementById("password").value;
 
-  const res = await fetch("/register", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username, password })
-  });
+  let users = JSON.parse(localStorage.getItem("users")) || [];
 
-  const data = await res.text();
-  alert(data);
-
-  if (res.ok) {
-    window.location.href = "login.html";
+  if (users.find(u => u.username === username)) {
+    alert("Utente già esistente");
+    return;
   }
+
+  users.push({ username, password });
+  localStorage.setItem("users", JSON.stringify(users));
+
+  alert("Registrazione completata!");
+  window.location.href = "login.html";
 });
 </script>
 
