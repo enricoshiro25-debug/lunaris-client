@@ -5,18 +5,18 @@ body {
 
 #avatar {
   position: relative;
-  width: 96px;    /* larghezza avatar */
-  height: 128px;  /* altezza avatar */
+  width: 64px;
+  height: 96px;  /* 64 vestito + 32 capelli */
   margin: 40px auto;
 }
 
 /* Vestito */
 #robe {
   position: absolute;
-  bottom: 0;       /* sempre alla base */
-  left: 16px;      /* centra rispetto al contenitore */
-  width: 64px;     /* proporzionato */
-  height: 64px;    /* altezza proporzionata */
+  bottom: 0;
+  left: 0;
+  width: 64px;
+  height: 64px;
   z-index: 1;
   image-rendering: pixelated;
 }
@@ -24,10 +24,10 @@ body {
 /* Faccia */
 #face {
   position: absolute;
-  top: 16px;       /* sposta leggermente verso il basso */
-  left: 16px;
-  width: 64px;     /* larghezza faccia */
-  height: 64px;    /* altezza faccia */
+  bottom: 32px;  /* sopra il vestito */
+  left: 0;
+  width: 64px;
+  height: 64px;
   z-index: 2;
   image-rendering: pixelated;
 }
@@ -35,10 +35,11 @@ body {
 /* Capelli */
 #hair {
   position: absolute;
-  top: 8px;        /* leggermente sopra la faccia */
-  left: 16px;
-  width: 64px;     /* stessa larghezza della faccia */
-  height: 64px;    /* proporzionata alla faccia */
-  z-index: 3;      /* sempre davanti alla faccia */
+  bottom: 64px;  /* sopra la faccia */
+  left: 0;
+  width: 64px;
+  height: 32px;  /* altezza ridotta */
+  z-index: 3;
   image-rendering: pixelated;
 }
+
