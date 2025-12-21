@@ -3,17 +3,18 @@ const cols = 10;
 
 let playerPos = { x: 4, y: 4 };
 
-// Crea la mappa
+// Mappa con celle
 const mapContainer = document.getElementById("map");
 let cells = [];
 
+// Creazione griglia
 for (let y = 0; y < rows; y++) {
   for (let x = 0; x < cols; x++) {
     let cell = document.createElement("div");
     cell.classList.add("cell");
 
-    // muri esterni
-    if (x === 0 || x === cols-1 || y === 0 || y === rows-1) {
+    // Muri esterni
+    if (x === 0 || x === cols -1 || y === 0 || y === rows -1) {
       cell.classList.add("wall");
     } else {
       cell.classList.add("floor");
@@ -28,12 +29,12 @@ for (let y = 0; y < rows; y++) {
 function drawPlayer() {
   cells.forEach(c => c.el.classList.remove("player"));
   const cell = cells.find(c => c.x === playerPos.x && c.y === playerPos.y);
-  if (cell) cell.el.classList.add("player");
+  if(cell) cell.el.classList.add("player");
 }
 
 drawPlayer();
 
-// movimento
+// Movimento con funzioni
 function move(dir) {
   let newX = playerPos.x;
   let newY = playerPos.y;
@@ -43,7 +44,7 @@ function move(dir) {
   if(dir === "left") newX--;
   if(dir === "right") newX++;
 
-  // verifica muri
+  // Verifica muri
   const target = cells.find(c => c.x === newX && c.y === newY);
   if(target && !target.el.classList.contains("wall")) {
     playerPos.x = newX;
@@ -52,11 +53,10 @@ function move(dir) {
   }
 }
 
-// movimento con frecce tastiera
+// Movimento con tastiera
 document.addEventListener("keydown", (e) => {
   if(e.key === "ArrowUp") move("up");
   if(e.key === "ArrowDown") move("down");
   if(e.key === "ArrowLeft") move("left");
   if(e.key === "ArrowRight") move("right");
 });
-
