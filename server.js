@@ -1,17 +1,9 @@
 const express = require('express');
-const path = require('path');
-
 const app = express();
 
-// SERVE TUTTI I FILE STATICI (IMMAGINI, CSS, JS)
-app.use(express.static(path.join(__dirname, 'public')));
+// SERVE LA CARTELLA PUBLIC
+app.use(express.static('public'));
 
-// HOME
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log('Server avviato sulla porta ' + PORT);
+app.listen(process.env.PORT || 3000, () => {
+  console.log('Server avviato');
 });
