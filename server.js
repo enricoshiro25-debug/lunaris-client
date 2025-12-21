@@ -1,16 +1,29 @@
 const express = require("express");
+const fs = require("fs");
+const path = require("path");
+
 const app = express();
 
-// ======================
-// MIDDLEWARE
-// ======================
 app.use(express.static("public"));
 app.use(express.json());
 
 // ======================
-// DATABASE TEMPORANEO
+// FILE DATABASE
 // ======================
-const users = [];
+const DATA_FILE = path.join(__dirname, "users.json");
+
+// utility: leggi utenti
+function readUsers() {
+  if (!fs.existsSync(DATA_FILE)) {
+    fs.writeFileSync(DATA_FILE, "[]");
+  }
+  return JSON.parse(fs.readFileSync(DATA_FILE, "utf8"));
+}
+
+// utility: salva utenti
+function saveUsers(users) {
+  fs.writeFileSync(DATA_FILE, JSON.stringify(users, null, 2));
+}
 
 // ======================
 // REGISTRAZIONE
@@ -22,13 +35,19 @@ app.post("/register", (req, res) => {
     return res.status(400).send("Compila tutti i campi");
   }
 
-  const exists = users.find(u => u.username === username);
-  if (exists) {
+  const users = readUsers();
+
+  if (users.find(u => u.username === username)) {
     return res.status(400).send("Utente già esistente");
   }
 
-  users.push({ username, password });
-  console.log("Utenti registrati:", users);
+  users.push({
+    username,
+    password,
+    avatar: { face: 0, robe: 0 }
+  });
+
+  saveUsers(users);
 
   res.send("Registrazione completata!");
 });
@@ -38,6 +57,8 @@ app.post("/register", (req, res) => {
 // ======================
 app.post("/login", (req, res) => {
   const { username, password } = req.body;
+
+  const users = readUsers();
 
   const user = users.find(
     u => u.username === username && u.password === password
@@ -51,14 +72,14 @@ app.post("/login", (req, res) => {
 });
 
 // ======================
-// TEST SERVER
+// TEST
 // ======================
 app.get("/test", (req, res) => {
   res.send("Server OK");
 });
 
 // ======================
-// AVVIO SERVER
+// START
 // ======================
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
