@@ -1,1 +1,51 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Crea il tuo Mago – Lunaris</title>
+<link rel="stylesheet" href="style/main.css">
+</head>
+<body>
 
+<h1>✨ Creazione Personaggio ✨</h1>
+
+<div class="container">
+
+  <div class="panel">
+    <h3>Aspetto</h3>
+
+    <label>Genere</label>
+    <select onchange="setBody(this.value)">
+      <option value="male.png">Maschio</option>
+      <option value="female.png">Femmina</option>
+    </select>
+
+    <label>Capelli</label>
+    <select onchange="setHair(this.value)">
+      <option value="hair1.png">Capelli 1</option>
+      <option value="hair2.png">Capelli 2</option>
+      <option value="hair3.png">Capelli 3</option>
+    </select>
+
+    <label>Vestito</label>
+    <select onchange="setOutfit(this.value)">
+      <option value="robe1.png">Veste 1</option>
+      <option value="robe2.png">Veste 2</option>
+      <option value="robe3.png">Veste 3</option>
+    </select>
+
+    <button onclick="savePG()">Salva Personaggio</button>
+    <p id="msg"></p>
+  </div>
+
+  <div class="avatar-box">
+    <img id="body" src="images/avatar/body/male.png">
+    <img id="outfit" src="images/avatar/outfits/robe1.png">
+    <img id="hair" src="images/avatar/hair/hair1.png">
+  </div>
+
+</div>
+
+<script src="js/creator.js"></script>
+</body>
+</html>
