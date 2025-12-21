@@ -56,4 +56,13 @@ io.on("connection",(socket)=>{
 });
 
 http.listen(3000, ()=>console.log("Server attivo su http://localhost:3000"));
+app.post("/saveAvatar",(req,res)=>{
+  const {username, avatar} = req.body;
+  let players = loadPlayers();
+  if(players[username]){
+    players[username].avatar = avatar;
+    savePlayers(players);
+    return res.send("Avatar salvato!");
+  } else return res.status(400).send("Utente non trovato");
+});
 
