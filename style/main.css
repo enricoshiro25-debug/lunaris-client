@@ -1,44 +1,54 @@
 body {
+  margin: 0;
+  font-family: Arial, sans-serif;
   background: #000;
   color: #fff;
-  font-family: Arial;
   text-align: center;
 }
 
-.container {
-  display: flex;
-  gap: 30px;
-  justify-content: center;
-  margin-top: 30px;
+button {
+  padding: 10px 16px;
+  margin: 6px;
+  background: #6b3fa0;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
 }
 
-.panel {
-  background: #111;
-  padding: 15px;
-  width: 220px;
-  border: 2px solid #444;
+button:hover {
+  background: #8b5ccf;
 }
 
 .avatar-box {
   position: relative;
-  width: 64px;
-  height: 96px;
+  width: 96px;
+  height: 160px;
+  margin: 20px auto;
 }
 
-.avatar-box img {
+.avatar-layer {
   position: absolute;
-  width: 64px;
-  height: 96px;
+  left: 50%;
+  transform: translateX(-50%);
   image-rendering: pixelated;
 }
 
-#body { z-index: 1; }
-#outfit { z-index: 2; }
-#hair { z-index: 3; }
-
-input, button, select {
-  width: 100%;
-  margin-bottom: 8px;
-  padding: 6px;
+/* ordine e dimensioni stile bewitched */
+.avatar-body {
+  width: 96px;
+  bottom: 0;
+  z-index: 1;
 }
 
+.avatar-outfit {
+  width: 96px;
+  bottom: 0;
+  z-index: 2;
+}
+
+.avatar-hair {
+  width: 64px;
+  top: 8px;
+  z-index: 4;
+}
