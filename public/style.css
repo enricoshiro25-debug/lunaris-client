@@ -5,8 +5,8 @@ body {
 
 #avatar {
   position: relative;
-  width: 128px;
-  height: 128px;
+  width: 96px;   /* dimensione finale avatar */
+  height: 128px; /* altezza avatar */
   margin: 40px auto;
 }
 
@@ -14,7 +14,20 @@ body {
   position: absolute;
   top: 0;
   left: 0;
-  width: 128px;
-  height: 128px;
+  width: 96px;
+  height: auto;
   image-rendering: pixelated;
 }
+
+#robe {
+  z-index: 1;   /* dietro */
+}
+
+#face {
+  z-index: 2;   /* davanti al vestito */
+}
+
+#hair {
+  z-index: 3;   /* davanti a tutto */
+}
+
