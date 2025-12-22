@@ -16,42 +16,34 @@ document.getElementById("face").src =
 document.getElementById("robe").src =
   "/images/avatars/robe/" + robes[avatar.robe];
 
-// ================= MAPPA LOGICA =================
+// ================= MAPPA =================
 const COLS = 16;
 const ROWS = 12;
-
-// ================= ISOMETRIA =================
 const ISO_W = 64;
 const ISO_H = 32;
 
 const room = document.getElementById("room");
+const camera = document.getElementById("camera");
 const floor = document.getElementById("floor");
 const player = document.getElementById("player");
 
 // ================= STATO PG =================
 let gridX = 7;
 let gridY = 6;
-let lastX = gridX;
-let lastY = gridY;
-let direction = "front";
 
-// ================= COLLISION MAP =================
+// ================= COLLISIONI =================
 const blocked = Array.from({ length: ROWS }, () =>
   Array(COLS).fill(false)
 );
 
 // ================= PAVIMENTO =================
-floor.innerHTML = "";
 for (let y = 0; y < ROWS; y++) {
   for (let x = 0; x < COLS; x++) {
     const tile = document.createElement("div");
     tile.className = "tile";
 
-    const sx = (x - y) * (ISO_W / 2);
-    const sy = (x + y) * (ISO_H / 2);
-
-    tile.style.left = sx + "px";
-    tile.style.top = sy + "px";
+    tile.style.left = (x - y) * (ISO_W / 2) + "px";
+    tile.style.top = (x + y) * (ISO_H / 2) + "px";
     tile.style.zIndex = x + y;
 
     floor.appendChild(tile);
@@ -67,7 +59,7 @@ const furniList = [
 
 furniList.forEach(f => blocked[f.y][f.x] = true);
 
-// ================= ISO POSITION =================
+// ================= ISO POS =================
 function isoPos(x, y) {
   return {
     x: (x - y) * (ISO_W / 2),
@@ -83,52 +75,44 @@ function drawFurni() {
     el.className = "furni";
 
     const pos = isoPos(f.x, f.y);
-    const fr = floor.getBoundingClientRect();
-    const rr = room.getBoundingClientRect();
-
-    el.style.left = fr.left - rr.left + pos.x - 32 + "px";
-    el.style.top = fr.top - rr.top + pos.y - f.offsetY + "px";
+    el.style.left = pos.x - 32 + "px";
+    el.style.top = pos.y - f.offsetY + "px";
     el.style.zIndex = f.x + f.y + 5;
 
-    room.appendChild(el);
+    camera.appendChild(el);
   });
 }
 
 // ================= UPDATE PLAYER =================
 function updatePlayer() {
   const pos = isoPos(gridX, gridY);
-  const fr = floor.getBoundingClientRect();
-  const rr = room.getBoundingClientRect();
 
-  player.style.left =
-    fr.left - rr.left + pos.x - player.offsetWidth / 2 + "px";
-  player.style.top =
-    fr.top - rr.top + pos.y - player.offsetHeight + 16 + "px";
-
+  player.style.left = pos.x - player.offsetWidth / 2 + "px";
+  player.style.top = pos.y - player.offsetHeight + 16 + "px";
   player.style.zIndex = gridX + gridY + 10;
+
+  // CAMERA SEGUE PG (HABBO STYLE)
+  camera.style.transform =
+    `translate(${-pos.x + room.clientWidth / 2}px, ${-pos.y + room.clientHeight / 2}px)`;
 }
 
-// ================= PATHFINDING (BFS) =================
-function findPath(startX, startY, endX, endY) {
-  const queue = [{ x: startX, y: startY, path: [] }];
+// ================= PATHFINDING SEMPLICE =================
+function findPath(sx, sy, ex, ey) {
+  const queue = [{ x: sx, y: sy, path: [] }];
   const visited = Array.from({ length: ROWS }, () =>
     Array(COLS).fill(false)
   );
 
-  visited[startY][startX] = true;
+  visited[sy][sx] = true;
 
   const dirs = [
-    { x: 1, y: 0 },
-    { x: -1, y: 0 },
-    { x: 0, y: 1 },
-    { x: 0, y: -1 }
+    { x: 1, y: 0 }, { x: -1, y: 0 },
+    { x: 0, y: 1 }, { x: 0, y: -1 }
   ];
 
   while (queue.length) {
     const cur = queue.shift();
-
-    if (cur.x === endX && cur.y === endY)
-      return cur.path;
+    if (cur.x === ex && cur.y === ey) return cur.path;
 
     for (const d of dirs) {
       const nx = cur.x + d.x;
@@ -149,11 +133,10 @@ function findPath(startX, startY, endX, endY) {
       }
     }
   }
-
   return [];
 }
 
-// ================= WALK PATH =================
+// ================= CAMMINATA =================
 let walking = false;
 
 function walkPath(path) {
@@ -182,15 +165,15 @@ floor.addEventListener("click", e => {
   const isoX = mx / (ISO_W / 2);
   const isoY = my / (ISO_H / 2);
 
-  const tx = Math.floor((isoY + isoX) / 2);
-  const ty = Math.floor((isoY - isoX) / 2);
+  const x = Math.floor((isoY + isoX) / 2);
+  const y = Math.floor((isoY - isoX) / 2);
 
   if (
-    tx >= 0 && tx < COLS &&
-    ty >= 0 && ty < ROWS &&
-    !blocked[ty][tx]
+    x >= 0 && x < COLS &&
+    y >= 0 && y < ROWS &&
+    !blocked[y][x]
   ) {
-    const path = findPath(gridX, gridY, tx, ty);
+    const path = findPath(gridX, gridY, x, y);
     walkPath(path);
   }
 });
