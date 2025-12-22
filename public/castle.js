@@ -1,8 +1,8 @@
-// ===== LOGIN CHECK =====
+// ================= LOGIN CHECK =================
 const username = localStorage.getItem("username");
 if (!username) window.location.href = "login.html";
 
-// ===== AVATAR =====
+// ================= AVATAR =================
 const avatar = JSON.parse(localStorage.getItem("avatar_" + username)) || {
   face: 0,
   robe: 0
@@ -17,11 +17,11 @@ const robeImg = document.getElementById("robe");
 faceImg.src = "/images/avatars/face/" + faces[avatar.face];
 robeImg.src = "/images/avatars/robe/" + robes[avatar.robe];
 
-// ===== MAPPA LOGICA (RETTANGOLARE) =====
+// ================= MAPPA LOGICA =================
 const COLS = 16;
 const ROWS = 12;
 
-// ===== RENDER ISOMETRICO (HABBO-LIKE) =====
+// ================= ISOMETRIA =================
 const ISO_W = 64;
 const ISO_H = 32;
 
@@ -29,16 +29,19 @@ const room = document.getElementById("room");
 const floor = document.getElementById("floor");
 const player = document.getElementById("player");
 
-// ===== POSIZIONE LOGICA PG =====
+// ================= STATO PG =================
 let gridX = 7;
 let gridY = 6;
 
-// ===== DIREZIONE (LOGICA) =====
 let lastX = gridX;
 let lastY = gridY;
 let direction = "front";
 
-// ===== DISEGNO PAVIMENTO ISOMETRICO =====
+let isMoving = false;
+let walkInterval = null;
+let walkFrame = 0;
+
+// ================= PAVIMENTO =================
 floor.innerHTML = "";
 
 for (let y = 0; y < ROWS; y++) {
@@ -57,7 +60,7 @@ for (let y = 0; y < ROWS; y++) {
   }
 }
 
-// ===== CONVERSIONE LOGICA → ISO =====
+// ================= ISO POSITION =================
 function isoPos(x, y) {
   return {
     x: (x - y) * (ISO_W / 2),
@@ -65,9 +68,39 @@ function isoPos(x, y) {
   };
 }
 
-// ===== AGGIORNA POSIZIONE PG =====
+// ================= WALK ANIMATION =================
+function startWalkAnimation() {
+  if (walkInterval) return;
+
+  walkInterval = setInterval(() => {
+    walkFrame = (walkFrame + 1) % 2;
+
+    player.style.transform =
+      `scaleX(${direction === "left" ? -1 : 1}) translateY(${walkFrame === 0 ? 0 : -2}px)`;
+  }, 200);
+}
+
+function stopWalkAnimation() {
+  clearInterval(walkInterval);
+  walkInterval = null;
+  walkFrame = 0;
+
+  player.style.transform =
+    `scaleX(${direction === "left" ? -1 : 1})`;
+}
+
+// ================= UPDATE PLAYER =================
 function updatePlayer() {
-  // DIREZIONE LOGICA
+  // MOVIMENTO
+  if (gridX !== lastX || gridY !== lastY) {
+    isMoving = true;
+    startWalkAnimation();
+  } else {
+    isMoving = false;
+    stopWalkAnimation();
+  }
+
+  // DIREZIONE
   if (gridX > lastX) direction = "right";
   else if (gridX < lastX) direction = "left";
   else if (gridY > lastY) direction = "front";
@@ -75,15 +108,6 @@ function updatePlayer() {
 
   lastX = gridX;
   lastY = gridY;
-
-  // ORIENTAMENTO VISIVO (SENZA CAMBIARE IMMAGINE)
-  if (direction === "left") {
-    player.style.transform = "scaleX(-1)";
-  } else if (direction === "right") {
-    player.style.transform = "scaleX(1)";
-  } else {
-    player.style.transform = "scaleX(1)";
-  }
 
   // POSIZIONE ISO
   const pos = isoPos(gridX, gridY);
@@ -96,11 +120,11 @@ function updatePlayer() {
   player.style.top =
     (floorRect.top - roomRect.top + pos.y - player.offsetHeight + 16) + "px";
 
-  // PROFONDITÀ (HABBO STYLE)
+  // PROFONDITÀ
   player.style.zIndex = gridX + gridY + 10;
 }
 
-// ===== CLICK HABBO-LIKE (SUL PAVIMENTO) =====
+// ================= CLICK (HABBO STYLE) =================
 floor.addEventListener("click", e => {
   const floorRect = floor.getBoundingClientRect();
   const mx = e.clientX - floorRect.left;
@@ -119,5 +143,5 @@ floor.addEventListener("click", e => {
   }
 });
 
-// ===== INIT =====
+// ================= INIT =================
 updatePlayer();
