@@ -1,4 +1,4 @@
-// ================= LOGIN CHECK =================
+// ================= LOGIN =================
 const username = localStorage.getItem("username");
 if (!username) window.location.href = "login.html";
 
@@ -16,7 +16,7 @@ document.getElementById("face").src =
 document.getElementById("robe").src =
   "/images/avatars/robe/" + robes[avatar.robe];
 
-// ================= MAPPA =================
+// ================= COSTANTI =================
 const COLS = 16;
 const ROWS = 12;
 const ISO_W = 64;
@@ -50,11 +50,14 @@ for (let y = 0; y < ROWS; y++) {
   }
 }
 
-// ================= FURNI (1x1) =================
+// === CENTRAMENTO FLOOR (FONDAMENTALE)
+const floorWidth = COLS * (ISO_W / 2);
+floor.style.left = floorWidth / 2 + "px";
+floor.style.top = "0px";
+
+// ================= FURNI =================
 const furniList = [
-  { img: "/images/furni/chest.png", x: 6, y: 7, offsetY: 20 },
-  { img: "/images/furni/table.png", x: 9, y: 6, offsetY: 28 },
-  { img: "/images/furni/bookshelf.png", x: 4, y: 5, offsetY: 48 }
+  { img: "/images/furni/chest.png", x: 6, y: 7, offsetY: 20 }
 ];
 
 furniList.forEach(f => blocked[f.y][f.x] = true);
@@ -67,23 +70,21 @@ function isoPos(x, y) {
   };
 }
 
-// ================= RENDER FURNI =================
-function drawFurni() {
-  furniList.forEach(f => {
-    const el = document.createElement("img");
-    el.src = f.img;
-    el.className = "furni";
+// ================= DRAW FURNI =================
+furniList.forEach(f => {
+  const el = document.createElement("img");
+  el.src = f.img;
+  el.className = "furni";
 
-    const pos = isoPos(f.x, f.y);
-    el.style.left = pos.x - 32 + "px";
-    el.style.top = pos.y - f.offsetY + "px";
-    el.style.zIndex = f.x + f.y + 5;
+  const pos = isoPos(f.x, f.y);
+  el.style.left = pos.x - 32 + "px";
+  el.style.top = pos.y - f.offsetY + "px";
+  el.style.zIndex = f.x + f.y + 5;
 
-    camera.appendChild(el);
-  });
-}
+  camera.appendChild(el);
+});
 
-// ================= UPDATE PLAYER =================
+// ================= PLAYER =================
 function updatePlayer() {
   const pos = isoPos(gridX, gridY);
 
@@ -91,20 +92,17 @@ function updatePlayer() {
   player.style.top = pos.y - player.offsetHeight + 16 + "px";
   player.style.zIndex = gridX + gridY + 10;
 
-  // CAMERA SEGUE PG (HABBO STYLE)
- camera.style.left =
-  room.clientWidth / 2 - pos.x + "px";
+  // CAMERA SEGUE PG (STABILE)
+  camera.style.left = room.clientWidth / 2 - pos.x + "px";
+  camera.style.top = room.clientHeight / 2 - pos.y + "px";
+}
 
-camera.style.top =
-  room.clientHeight / 2 - pos.y + "px";
-
-// ================= PATHFINDING SEMPLICE =================
+// ================= PATHFINDING =================
 function findPath(sx, sy, ex, ey) {
   const queue = [{ x: sx, y: sy, path: [] }];
   const visited = Array.from({ length: ROWS }, () =>
     Array(COLS).fill(false)
   );
-
   visited[sy][sx] = true;
 
   const dirs = [
@@ -119,7 +117,6 @@ function findPath(sx, sy, ex, ey) {
     for (const d of dirs) {
       const nx = cur.x + d.x;
       const ny = cur.y + d.y;
-
       if (
         nx >= 0 && nx < COLS &&
         ny >= 0 && ny < ROWS &&
@@ -138,7 +135,7 @@ function findPath(sx, sy, ex, ey) {
   return [];
 }
 
-// ================= CAMMINATA =================
+// ================= MOVIMENTO =================
 let walking = false;
 
 function walkPath(path) {
@@ -175,11 +172,9 @@ floor.addEventListener("click", e => {
     y >= 0 && y < ROWS &&
     !blocked[y][x]
   ) {
-    const path = findPath(gridX, gridY, x, y);
-    walkPath(path);
+    walkPath(findPath(gridX, gridY, x, y));
   }
 });
 
 // ================= INIT =================
-drawFurni();
 updatePlayer();
