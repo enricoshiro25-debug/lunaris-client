@@ -15,33 +15,58 @@ document.getElementById("face").src =
 document.getElementById("robe").src =
   "/images/avatars/robe/" + robes[avatar.robe];
 
-// ===== GRIGLIA SOLIDA =====
-const TILE = 40;
+// ===== GRIGLIA (LOGICA INVARIATA) =====
+const TILE = 40;          // dimensione logica
 const COLS = 16;
 const ROWS = 12;
+
+// ===== ISOMETRIA (RENDER) =====
+const ISO_W = 64;
+const ISO_H = 32;
 
 const room = document.getElementById("room");
 const player = document.getElementById("player");
 
+// posizione logica (IDENTICA A PRIMA)
 let gridX = 7;
 let gridY = 6;
 
-function clamp(val, min, max) {
-  return Math.max(min, Math.min(max, val));
+// origine isometrica (centro stanza)
+function getOrigin() {
+  return {
+    x: room.clientWidth / 2,
+    y: 60
+  };
 }
 
+// logica → schermo (SOLO RENDER)
+function isoToScreen(x, y) {
+  const o = getOrigin();
+  return {
+    x: (x - y) * (ISO_W / 2) + o.x,
+    y: (x + y) * (ISO_H / 2) + o.y
+  };
+}
+
+// posizionamento PG (piedi sul tile)
 function updatePlayer() {
-  player.style.left = gridX * TILE + TILE / 2 + "px";
-  player.style.top = gridY * TILE + TILE / 2 + "px";
+  const pos = isoToScreen(gridX, gridY);
+  player.style.left = (pos.x - player.offsetWidth / 2) + "px";
+  player.style.top = (pos.y - player.offsetHeight) + "px";
 }
 
+// CLICK — USA ANCORA LA LOGICA TOP-DOWN
 room.addEventListener("click", e => {
   const rect = room.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
 
-  gridX = clamp(Math.floor(x / TILE), 0, COLS - 1);
-  gridY = clamp(Math.floor(y / TILE), 0, ROWS - 1);
+  // convertiamo il click come se fosse top-down
+  const relX = mx / rect.width;
+  const relY = my / rect.height;
+
+  gridX = Math.floor(relX * COLS);
+  gridY = Math.floor(relY * ROWS);
 
   updatePlayer();
 });
