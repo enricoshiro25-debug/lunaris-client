@@ -15,8 +15,7 @@ document.getElementById("face").src =
 document.getElementById("robe").src =
   "/images/avatars/robe/" + robes[avatar.robe];
 
-// ===== GRIGLIA (LOGICA INVARIATA) =====
-const TILE = 40;          // dimensione logica
+// ===== LOGICA GRIGLIA (SOLIDA) =====
 const COLS = 16;
 const ROWS = 12;
 
@@ -27,19 +26,19 @@ const ISO_H = 32;
 const room = document.getElementById("room");
 const player = document.getElementById("player");
 
-// posizione logica (IDENTICA A PRIMA)
+// posizione logica
 let gridX = 7;
 let gridY = 6;
 
-// origine isometrica (centro stanza)
+// origine isometrica
 function getOrigin() {
   return {
     x: room.clientWidth / 2,
-    y: 60
+    y: 80
   };
 }
 
-// logica → schermo (SOLO RENDER)
+// logica → schermo
 function isoToScreen(x, y) {
   const o = getOrigin();
   return {
@@ -48,25 +47,42 @@ function isoToScreen(x, y) {
   };
 }
 
-// posizionamento PG (piedi sul tile)
+// schermo → logica (INVERSA CORRETTA)
+function screenToGrid(mx, my) {
+  const o = getOrigin();
+  const dx = mx - o.x;
+  const dy = my - o.y;
+
+  const gx = (dx / (ISO_W / 2) + dy / (ISO_H / 2)) / 2;
+  const gy = (dy / (ISO_H / 2) - dx / (ISO_W / 2)) / 2;
+
+  return {
+    x: Math.floor(gx),
+    y: Math.floor(gy)
+  };
+}
+
+function clamp(v, min, max) {
+  return Math.max(min, Math.min(max, v));
+}
+
+// posizionamento PG (piedi)
 function updatePlayer() {
   const pos = isoToScreen(gridX, gridY);
   player.style.left = (pos.x - player.offsetWidth / 2) + "px";
   player.style.top = (pos.y - player.offsetHeight) + "px";
 }
 
-// CLICK — USA ANCORA LA LOGICA TOP-DOWN
+// CLICK CORRETTO
 room.addEventListener("click", e => {
   const rect = room.getBoundingClientRect();
   const mx = e.clientX - rect.left;
   const my = e.clientY - rect.top;
 
-  // convertiamo il click come se fosse top-down
-  const relX = mx / rect.width;
-  const relY = my / rect.height;
+  const g = screenToGrid(mx, my);
 
-  gridX = Math.floor(relX * COLS);
-  gridY = Math.floor(relY * ROWS);
+  gridX = clamp(g.x, 0, COLS - 1);
+  gridY = clamp(g.y, 0, ROWS - 1);
 
   updatePlayer();
 });
