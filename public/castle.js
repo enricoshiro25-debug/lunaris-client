@@ -69,18 +69,25 @@ function updatePlayer() {
 }
 
 // ===== CLICK HABBO-LIKE (LOGICA RETTANGOLARE) =====
-room.addEventListener("click", e => {
-  const rect = room.getBoundingClientRect();
-  const mx = e.clientX - rect.left;
-  const my = e.clientY - rect.top;
+floor.addEventListener("click", e => {
+  const floorRect = floor.getBoundingClientRect();
 
-  const relX = mx / rect.width;
-  const relY = my / rect.height;
+  const mx = e.clientX - floorRect.left;
+  const my = e.clientY - floorRect.top;
 
-  gridX = Math.floor(relX * COLS);
-  gridY = Math.floor(relY * ROWS);
+  // coordinate isometriche relative al pavimento
+  const isoX = mx / (ISO_W / 2);
+  const isoY = my / (ISO_H / 2);
 
-  updatePlayer();
+  const x = Math.floor((isoY + isoX) / 2);
+  const y = Math.floor((isoY - isoX) / 2);
+
+  // limiti logici rettangolari (Habbo-like)
+  if (x >= 0 && x < COLS && y >= 0 && y < ROWS) {
+    gridX = x;
+    gridY = y;
+    updatePlayer();
+  }
 });
 
 updatePlayer();
