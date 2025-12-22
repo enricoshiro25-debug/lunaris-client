@@ -12,52 +12,50 @@ const robes = ["robe1.png","robe2.png","robe3.png"];
 
 document.getElementById("face").src =
   "/images/avatars/face/" + faces[avatar.face];
-
 document.getElementById("robe").src =
   "/images/avatars/robe/" + robes[avatar.robe];
 
-// ===== ROOM & GRID =====
-const TILE = 40;
+// ===== ISOMETRIA =====
+const TILE_W = 64;
+const TILE_H = 32;
+
 const room = document.getElementById("room");
 const player = document.getElementById("player");
 
-let gridX = 5;
-let gridY = 5;
+// posizione in griglia isometrica
+let gridX = 4;
+let gridY = 4;
 
-function getGridLimits() {
+// conversione griglia → schermo
+function isoToScreen(x, y) {
   return {
-    cols: Math.floor(room.clientWidth / TILE),
-    rows: Math.floor(room.clientHeight / TILE)
+    x: (x - y) * (TILE_W / 2) + room.clientWidth / 2,
+    y: (x + y) * (TILE_H / 2)
   };
 }
 
-function clamp(val, min, max) {
-  return Math.max(min, Math.min(max, val));
+function updatePlayer() {
+  const pos = isoToScreen(gridX, gridY);
+  player.style.left = pos.x - 40 + "px";
+  player.style.top = pos.y - 90 + "px";
 }
 
-function updatePlayerPosition() {
-  player.style.left = gridX * TILE + "px";
-  player.style.top = gridY * TILE - 60 + "px";
-}
-
-// CLICK SU STANZA
+// click per muovere
 room.addEventListener("click", e => {
   const rect = room.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
+  const mx = e.clientX - rect.left - room.clientWidth / 2;
+  const my = e.clientY - rect.top;
 
-  const { cols, rows } = getGridLimits();
+  const x = Math.floor((my / (TILE_H / 2) + mx / (TILE_W / 2)) / 2);
+  const y = Math.floor((my / (TILE_H / 2) - mx / (TILE_W / 2)) / 2);
 
-  let newX = Math.floor(x / TILE);
-  let newY = Math.floor(y / TILE);
+  // limiti stanza
+  gridX = Math.max(0, Math.min(9, x));
+  gridY = Math.max(0, Math.min(9, y));
 
-  gridX = clamp(newX, 0, cols - 1);
-  gridY = clamp(newY, 0, rows - 1);
-
-  updatePlayerPosition();
+  updatePlayer();
 });
 
-// AGGIORNA SE CAMBIA DIMENSIONE (fullscreen / resize)
-window.addEventListener("resize", updatePlayerPosition);
+// iniziale
+updatePlayer();
 
-updatePlayerPosition();
