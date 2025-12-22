@@ -22,16 +22,31 @@ const TILE_H = 32;
 const room = document.getElementById("room");
 const player = document.getElementById("player");
 
-// posizione in griglia isometrica
 let gridX = 4;
 let gridY = 4;
 
-// conversione griglia → schermo
 function isoToScreen(x, y) {
   return {
     x: (x - y) * (TILE_W / 2) + room.clientWidth / 2,
     y: (x + y) * (TILE_H / 2)
   };
+}
+
+function screenToIso(mx, my) {
+  const cx = mx - room.clientWidth / 2;
+  const cy = my;
+
+  const isoX = (cy / (TILE_H / 2) + cx / (TILE_W / 2)) / 2;
+  const isoY = (cy / (TILE_H / 2) - cx / (TILE_W / 2)) / 2;
+
+  return {
+    x: Math.floor(isoX),
+    y: Math.floor(isoY)
+  };
+}
+
+function clamp(val, min, max) {
+  return Math.max(min, Math.min(max, val));
 }
 
 function updatePlayer() {
@@ -40,22 +55,18 @@ function updatePlayer() {
   player.style.top = pos.y - 90 + "px";
 }
 
-// click per muovere
+// CLICK CORRETTO SU TUTTA LA CELLA
 room.addEventListener("click", e => {
   const rect = room.getBoundingClientRect();
-  const mx = e.clientX - rect.left - room.clientWidth / 2;
+  const mx = e.clientX - rect.left;
   const my = e.clientY - rect.top;
 
-  const x = Math.floor((my / (TILE_H / 2) + mx / (TILE_W / 2)) / 2);
-  const y = Math.floor((my / (TILE_H / 2) - mx / (TILE_W / 2)) / 2);
+  const iso = screenToIso(mx, my);
 
-  // limiti stanza
-  gridX = Math.max(0, Math.min(9, x));
-  gridY = Math.max(0, Math.min(9, y));
+  gridX = clamp(iso.x, 0, 9);
+  gridY = clamp(iso.y, 0, 9);
 
   updatePlayer();
 });
 
-// iniziale
 updatePlayer();
-
