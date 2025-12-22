@@ -19,22 +19,29 @@ document.getElementById("robe").src =
 const TILE_W = 64;
 const TILE_H = 32;
 
+const GRID_W = 10;
+const GRID_H = 10;
+
 const room = document.getElementById("room");
 const player = document.getElementById("player");
+
+// offset per centrare la mappa
+const ORIGIN_X = room.clientWidth / 2;
+const ORIGIN_Y = 40; // 🔥 questo è il punto chiave
 
 let gridX = 4;
 let gridY = 4;
 
 function isoToScreen(x, y) {
   return {
-    x: (x - y) * (TILE_W / 2) + room.clientWidth / 2,
-    y: (x + y) * (TILE_H / 2)
+    x: (x - y) * (TILE_W / 2) + ORIGIN_X,
+    y: (x + y) * (TILE_H / 2) + ORIGIN_Y
   };
 }
 
 function screenToIso(mx, my) {
-  const cx = mx - room.clientWidth / 2;
-  const cy = my;
+  const cx = mx - ORIGIN_X;
+  const cy = my - ORIGIN_Y;
 
   const isoX = (cy / (TILE_H / 2) + cx / (TILE_W / 2)) / 2;
   const isoY = (cy / (TILE_H / 2) - cx / (TILE_W / 2)) / 2;
@@ -55,7 +62,7 @@ function updatePlayer() {
   player.style.top = pos.y - 90 + "px";
 }
 
-// CLICK CORRETTO SU TUTTA LA CELLA
+// CLICK CORRETTO SU TUTTA LA MAPPA
 room.addEventListener("click", e => {
   const rect = room.getBoundingClientRect();
   const mx = e.clientX - rect.left;
@@ -63,10 +70,11 @@ room.addEventListener("click", e => {
 
   const iso = screenToIso(mx, my);
 
-  gridX = clamp(iso.x, 0, 9);
-  gridY = clamp(iso.y, 0, 9);
+  gridX = clamp(iso.x, 0, GRID_W - 1);
+  gridY = clamp(iso.y, 0, GRID_H - 1);
 
   updatePlayer();
 });
 
+// INIT
 updatePlayer();
