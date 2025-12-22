@@ -42,6 +42,7 @@ for (let y = 0; y < ROWS; y++) {
 
     tile.style.left = screenX + "px";
     tile.style.top = screenY + "px";
+    tile.style.zIndex = x + y;
 
     floor.appendChild(tile);
   }
@@ -66,6 +67,9 @@ function updatePlayer() {
 
   player.style.top =
     (floorRect.top - roomRect.top + pos.y - player.offsetHeight + 16) + "px";
+
+  // 🔥 PROFONDITÀ DINAMICA (HABBO STYLE)
+  player.style.zIndex = gridX + gridY + 10;
 }
 
 // ===== CLICK HABBO-LIKE (LOGICA RETTANGOLARE) =====
