@@ -15,66 +15,52 @@ document.getElementById("face").src =
 document.getElementById("robe").src =
   "/images/avatars/robe/" + robes[avatar.robe];
 
-// ===== ISOMETRIA =====
+// ===== MAPPA ISOMETRICA REALE =====
 const TILE_W = 64;
 const TILE_H = 32;
-
 const GRID_W = 10;
 const GRID_H = 10;
 
 const room = document.getElementById("room");
 const player = document.getElementById("player");
 
-// offset per centrare la mappa
 const ORIGIN_X = room.clientWidth / 2;
-const ORIGIN_Y = 40; // 🔥 questo è il punto chiave
+const ORIGIN_Y = 40;
 
 let gridX = 4;
 let gridY = 4;
 
-function isoToScreen(x, y) {
-  return {
-    x: (x - y) * (TILE_W / 2) + ORIGIN_X,
-    y: (x + y) * (TILE_H / 2) + ORIGIN_Y
-  };
-}
+// crea le tile vere
+for (let y = 0; y < GRID_H; y++) {
+  for (let x = 0; x < GRID_W; x++) {
+    const tile = document.createElement("div");
+    tile.className = "tile";
 
-function screenToIso(mx, my) {
-  const cx = mx - ORIGIN_X;
-  const cy = my - ORIGIN_Y;
+    const screenX = (x - y) * (TILE_W / 2) + ORIGIN_X;
+    const screenY = (x + y) * (TILE_H / 2) + ORIGIN_Y;
 
-  const isoX = (cy / (TILE_H / 2) + cx / (TILE_W / 2)) / 2;
-  const isoY = (cy / (TILE_H / 2) - cx / (TILE_W / 2)) / 2;
+    tile.style.left = screenX - TILE_W / 2 + "px";
+    tile.style.top = screenY - TILE_H / 2 + "px";
 
-  return {
-    x: Math.floor(isoX),
-    y: Math.floor(isoY)
-  };
-}
+    tile.dataset.x = x;
+    tile.dataset.y = y;
 
-function clamp(val, min, max) {
-  return Math.max(min, Math.min(max, val));
+    tile.addEventListener("click", () => {
+      gridX = x;
+      gridY = y;
+      updatePlayer();
+    });
+
+    room.appendChild(tile);
+  }
 }
 
 function updatePlayer() {
-  const pos = isoToScreen(gridX, gridY);
-  player.style.left = pos.x - 40 + "px";
-  player.style.top = pos.y - 90 + "px";
+  const x = (gridX - gridY) * (TILE_W / 2) + ORIGIN_X;
+  const y = (gridX + gridY) * (TILE_H / 2) + ORIGIN_Y;
+
+  player.style.left = x - 40 + "px";
+  player.style.top = y - 90 + "px";
 }
 
-// CLICK CORRETTO SU TUTTA LA MAPPA
-room.addEventListener("click", e => {
-  const rect = room.getBoundingClientRect();
-  const mx = e.clientX - rect.left;
-  const my = e.clientY - rect.top;
-
-  const iso = screenToIso(mx, my);
-
-  gridX = clamp(iso.x, 0, GRID_W - 1);
-  gridY = clamp(iso.y, 0, GRID_H - 1);
-
-  updatePlayer();
-});
-
-// INIT
 updatePlayer();
