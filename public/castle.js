@@ -16,17 +16,20 @@ document.getElementById("face").src =
 document.getElementById("robe").src =
   "/images/avatars/robe/" + robes[avatar.robe];
 
-// ===== GRIGLIA =====
+// ===== ROOM & GRID =====
 const TILE = 40;
-const COLS = 16;
-const ROWS = 12;
-
 const room = document.getElementById("room");
 const player = document.getElementById("player");
 
-// posizione iniziale
-let gridX = 7;
-let gridY = 6;
+let gridX = 5;
+let gridY = 5;
+
+function getGridLimits() {
+  return {
+    cols: Math.floor(room.clientWidth / TILE),
+    rows: Math.floor(room.clientHeight / TILE)
+  };
+}
 
 function clamp(val, min, max) {
   return Math.max(min, Math.min(max, val));
@@ -37,20 +40,24 @@ function updatePlayerPosition() {
   player.style.top = gridY * TILE - 60 + "px";
 }
 
-// click su stanza
+// CLICK SU STANZA
 room.addEventListener("click", e => {
   const rect = room.getBoundingClientRect();
   const x = e.clientX - rect.left;
   const y = e.clientY - rect.top;
 
+  const { cols, rows } = getGridLimits();
+
   let newX = Math.floor(x / TILE);
   let newY = Math.floor(y / TILE);
 
-  // BLOCCO AI CONFINI
-  gridX = clamp(newX, 0, COLS - 1);
-  gridY = clamp(newY, 0, ROWS - 1);
+  gridX = clamp(newX, 0, cols - 1);
+  gridY = clamp(newY, 0, rows - 1);
 
   updatePlayerPosition();
 });
+
+// AGGIORNA SE CAMBIA DIMENSIONE (fullscreen / resize)
+window.addEventListener("resize", updatePlayerPosition);
 
 updatePlayerPosition();
