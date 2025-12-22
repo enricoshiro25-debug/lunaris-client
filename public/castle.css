@@ -1,4 +1,4 @@
-/* ================= RESET BASE ================= */
+/* ================= RESET ================= */
 * {
   box-sizing: border-box;
 }
@@ -19,19 +19,24 @@ body {
   position: relative;
   width: 900px;
   height: 550px;
-  background: radial-gradient(circle at center, #1a1a2e, #0b0b15);
+  background: radial-gradient(circle, #1a1a2e, #0b0b15);
   overflow: hidden;
 }
 
-/* ================= PAVIMENTO ISOMETRICO ================= */
-#floor {
+/* ================= CAMERA ================= */
+#camera {
   position: absolute;
   left: 50%;
-  top: 70px;
-  transform: translateX(-50%);
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
-/* TILE ISOMETRICA */
+/* ================= PAVIMENTO ================= */
+#floor {
+  position: absolute;
+}
+
+/* TILE */
 .tile {
   position: absolute;
   width: 64px;
@@ -47,10 +52,9 @@ body {
   width: 80px;
   height: 140px;
   pointer-events: none;
-  transition: left 0.25s linear, top 0.25s linear;
+  transition: left 0.22s linear, top 0.22s linear;
 }
 
-/* VESTITO */
 #robe {
   position: absolute;
   bottom: 0;
@@ -58,7 +62,6 @@ body {
   image-rendering: pixelated;
 }
 
-/* FACCIA */
 #face {
   position: absolute;
   bottom: 60px;
@@ -73,10 +76,3 @@ body {
   image-rendering: pixelated;
   pointer-events: none;
 }
-
-/* ================= DEBUG (FACOLTATIVO) ================= */
-/*
-.tile:hover {
-  background: #44447a;
-}
-*/
