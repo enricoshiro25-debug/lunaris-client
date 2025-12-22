@@ -92,9 +92,11 @@ function updatePlayer() {
   player.style.zIndex = gridX + gridY + 10;
 
   // CAMERA SEGUE PG (HABBO STYLE)
-  camera.style.transform =
-    `translate(${-pos.x + room.clientWidth / 2}px, ${-pos.y + room.clientHeight / 2}px)`;
-}
+ camera.style.left =
+  room.clientWidth / 2 - pos.x + "px";
+
+camera.style.top =
+  room.clientHeight / 2 - pos.y + "px";
 
 // ================= PATHFINDING SEMPLICE =================
 function findPath(sx, sy, ex, ey) {
