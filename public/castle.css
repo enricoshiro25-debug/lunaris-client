@@ -7,30 +7,26 @@ body {
   height: 100vh;
 }
 
-/* STANZA */
+/* CONTENITORE */
 #room {
   position: relative;
-  width: 640px;
-  height: 480px;
-  background-color: #1f1f2e;
-  background-image:
-    linear-gradient(#2f2f44 1px, transparent 1px),
-    linear-gradient(90deg, #2f2f44 1px, transparent 1px);
-  background-size: 40px 40px;
+  width: 800px;
+  height: 500px;
+  background: #151528;
+  overflow: hidden;
 }
 
 /* PLAYER */
 #player {
   position: absolute;
-  width: 40px;
-  height: 40px;
+  width: 80px;
+  height: 140px;
   pointer-events: none;
 }
 
 #robe {
   position: absolute;
   bottom: 0;
-  left: -20px;
   width: 80px;
   image-rendering: pixelated;
 }
@@ -38,7 +34,7 @@ body {
 #face {
   position: absolute;
   bottom: 60px;
-  left: -12px;
+  left: 8px;
   width: 64px;
   image-rendering: pixelated;
 }
