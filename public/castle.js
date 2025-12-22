@@ -69,8 +69,14 @@ function clamp(v, min, max) {
 // posizionamento PG (piedi)
 function updatePlayer() {
   const pos = isoToScreen(gridX, gridY);
-  player.style.left = (pos.x - player.offsetWidth / 2) + "px";
-  player.style.top = (pos.y - player.offsetHeight) + "px";
+
+  const FOOT_OFFSET = 10; // 👈 REGOLAZIONE FINE (8–14)
+
+  player.style.left =
+    (pos.x - player.offsetWidth / 2) + "px";
+
+  player.style.top =
+    (pos.y - player.offsetHeight + FOOT_OFFSET) + "px";
 }
 
 // CLICK CORRETTO
