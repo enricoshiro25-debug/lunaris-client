@@ -15,80 +15,70 @@ document.getElementById("face").src =
 document.getElementById("robe").src =
   "/images/avatars/robe/" + robes[avatar.robe];
 
-// ===== LOGICA GRIGLIA (SOLIDA) =====
+// ===== LOGICA RETTANGOLARE (HABBO-LIKE) =====
 const COLS = 16;
 const ROWS = 12;
 
-// ===== ISOMETRIA (RENDER) =====
+// ===== RENDER ISOMETRICO =====
 const ISO_W = 64;
 const ISO_H = 32;
 
 const room = document.getElementById("room");
+const floor = document.getElementById("floor");
 const player = document.getElementById("player");
 
-// posizione logica
+// posizione logica (come prima)
 let gridX = 7;
 let gridY = 6;
 
-// origine isometrica
-function getOrigin() {
+// ===== DISEGNO PAVIMENTO =====
+for (let y = 0; y < ROWS; y++) {
+  for (let x = 0; x < COLS; x++) {
+    const tile = document.createElement("div");
+    tile.className = "tile";
+
+    const screenX = (x - y) * (ISO_W / 2);
+    const screenY = (x + y) * (ISO_H / 2);
+
+    tile.style.left = screenX + "px";
+    tile.style.top = screenY + "px";
+
+    floor.appendChild(tile);
+  }
+}
+
+// ===== POSIZIONAMENTO PG (DA LOGICA → ISO) =====
+function isoPos(x, y) {
   return {
-    x: room.clientWidth / 2,
-    y: 80
+    x: (x - y) * (ISO_W / 2),
+    y: (x + y) * (ISO_H / 2)
   };
 }
 
-// logica → schermo
-function isoToScreen(x, y) {
-  const o = getOrigin();
-  return {
-    x: (x - y) * (ISO_W / 2) + o.x,
-    y: (x + y) * (ISO_H / 2) + o.y
-  };
-}
-
-// schermo → logica (INVERSA CORRETTA)
-function screenToGrid(mx, my) {
-  const o = getOrigin();
-  const dx = mx - o.x;
-  const dy = my - o.y;
-
-  const gx = (dx / (ISO_W / 2) + dy / (ISO_H / 2)) / 2;
-  const gy = (dy / (ISO_H / 2) - dx / (ISO_W / 2)) / 2;
-
-  return {
-    x: Math.floor(gx),
-    y: Math.floor(gy)
-  };
-}
-
-function clamp(v, min, max) {
-  return Math.max(min, Math.min(max, v));
-}
-
-// posizionamento PG (piedi)
 function updatePlayer() {
-  const pos = isoToScreen(gridX, gridY);
+  const pos = isoPos(gridX, gridY);
 
-  const FOOT_OFFSET = 10; // 👈 REGOLAZIONE FINE (8–14)
+  const floorRect = floor.getBoundingClientRect();
+  const roomRect = room.getBoundingClientRect();
 
   player.style.left =
-    (pos.x - player.offsetWidth / 2) + "px";
+    (floorRect.left - roomRect.left + pos.x - player.offsetWidth / 2) + "px";
 
   player.style.top =
-    (pos.y - player.offsetHeight + FOOT_OFFSET) + "px";
+    (floorRect.top - roomRect.top + pos.y - player.offsetHeight + 16) + "px";
 }
 
-// CLICK CORRETTO
+// ===== CLICK HABBO-LIKE (LOGICA RETTANGOLARE) =====
 room.addEventListener("click", e => {
   const rect = room.getBoundingClientRect();
   const mx = e.clientX - rect.left;
   const my = e.clientY - rect.top;
 
-  const g = screenToGrid(mx, my);
+  const relX = mx / rect.width;
+  const relY = my / rect.height;
 
-  gridX = clamp(g.x, 0, COLS - 1);
-  gridY = clamp(g.y, 0, ROWS - 1);
+  gridX = Math.floor(relX * COLS);
+  gridY = Math.floor(relY * ROWS);
 
   updatePlayer();
 });
