@@ -1,8 +1,8 @@
-// ================= LOGIN =================
+// ===== LOGIN =====
 const username = localStorage.getItem("username");
 if (!username) window.location.href = "login.html";
 
-// ================= AVATAR =================
+// ===== AVATAR =====
 const avatar = JSON.parse(localStorage.getItem("avatar_" + username)) || {
   face: 0,
   robe: 0
@@ -16,61 +16,43 @@ document.getElementById("face").src =
 document.getElementById("robe").src =
   "/images/avatars/robe/" + robes[avatar.robe];
 
-// ================= COSTANTI =================
+// ===== MAPPA =====
 const COLS = 16;
 const ROWS = 12;
 const ISO_W = 64;
 const ISO_H = 32;
 
 const room = document.getElementById("room");
-const camera = document.getElementById("camera");
 const floor = document.getElementById("floor");
 const player = document.getElementById("player");
 
-// ================= STATO PG =================
 let gridX = 7;
 let gridY = 6;
 
-// ================= COLLISIONI =================
+// ===== COLLISIONI =====
 const blocked = Array.from({ length: ROWS }, () =>
   Array(COLS).fill(false)
 );
 
-// ================= PAVIMENTO =================
+// ===== FLOOR =====
 for (let y = 0; y < ROWS; y++) {
   for (let x = 0; x < COLS; x++) {
     const tile = document.createElement("div");
     tile.className = "tile";
-
     tile.style.left = (x - y) * (ISO_W / 2) + "px";
     tile.style.top = (x + y) * (ISO_H / 2) + "px";
     tile.style.zIndex = x + y;
-
     floor.appendChild(tile);
   }
 }
 
-// === CENTRAMENTO FLOOR (FONDAMENTALE)
-const floorWidth = COLS * (ISO_W / 2);
-floor.style.left = floorWidth / 2 + "px";
-floor.style.top = "0px";
-
-// ================= FURNI =================
+// ===== FURNI (1x1) =====
 const furniList = [
-  { img: "/images/furni/chest.png", x: 6, y: 7, offsetY: 20 }
+  { img: "/images/furni/chest.png", x: 5, y: 6, offsetY: 24 }
 ];
 
 furniList.forEach(f => blocked[f.y][f.x] = true);
 
-// ================= ISO POS =================
-function isoPos(x, y) {
-  return {
-    x: (x - y) * (ISO_W / 2),
-    y: (x + y) * (ISO_H / 2)
-  };
-}
-
-// ================= DRAW FURNI =================
 furniList.forEach(f => {
   const el = document.createElement("img");
   el.src = f.img;
@@ -81,23 +63,26 @@ furniList.forEach(f => {
   el.style.top = pos.y - f.offsetY + "px";
   el.style.zIndex = f.x + f.y + 5;
 
-  camera.appendChild(el);
+  floor.appendChild(el);
 });
 
-// ================= PLAYER =================
-function updatePlayer() {
-  const pos = isoPos(gridX, gridY);
-
-  player.style.left = pos.x - player.offsetWidth / 2 + "px";
-  player.style.top = pos.y - player.offsetHeight + 16 + "px";
-  player.style.zIndex = gridX + gridY + 10;
-
-  // CAMERA SEGUE PG (STABILE)
-  camera.style.left = room.clientWidth / 2 - pos.x + "px";
-  camera.style.top = room.clientHeight / 2 - pos.y + "px";
+// ===== ISO =====
+function isoPos(x, y) {
+  return {
+    x: (x - y) * (ISO_W / 2),
+    y: (x + y) * (ISO_H / 2)
+  };
 }
 
-// ================= PATHFINDING =================
+// ===== PLAYER =====
+function updatePlayer() {
+  const pos = isoPos(gridX, gridY);
+  player.style.left = pos.x + room.clientWidth / 2 - 40 + "px";
+  player.style.top = pos.y + 80 - 120 + "px";
+  player.style.zIndex = gridX + gridY + 10;
+}
+
+// ===== PATHFINDING =====
 function findPath(sx, sy, ex, ey) {
   const queue = [{ x: sx, y: sy, path: [] }];
   const visited = Array.from({ length: ROWS }, () =>
@@ -117,6 +102,7 @@ function findPath(sx, sy, ex, ey) {
     for (const d of dirs) {
       const nx = cur.x + d.x;
       const ny = cur.y + d.y;
+
       if (
         nx >= 0 && nx < COLS &&
         ny >= 0 && ny < ROWS &&
@@ -135,7 +121,6 @@ function findPath(sx, sy, ex, ey) {
   return [];
 }
 
-// ================= MOVIMENTO =================
 let walking = false;
 
 function walkPath(path) {
@@ -153,7 +138,7 @@ function walkPath(path) {
   }, 220);
 }
 
-// ================= CLICK =================
+// ===== CLICK =====
 floor.addEventListener("click", e => {
   if (walking) return;
 
@@ -176,5 +161,5 @@ floor.addEventListener("click", e => {
   }
 });
 
-// ================= INIT =================
+// ===== INIT =====
 updatePlayer();
