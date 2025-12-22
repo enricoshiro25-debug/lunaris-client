@@ -6,8 +6,10 @@ body {
 /* STANZA A GRIGLIA */
 #room {
   position: relative;
-  width: 640px;
-  height: 480px;
+  width: 90vw;
+  height: 80vh;
+  max-width: 1000px;
+  max-height: 700px;
   margin: 40px auto;
   background-color: #2a2a40;
   background-image:
