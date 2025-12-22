@@ -34,6 +34,14 @@ const blocked = Array.from({ length: ROWS }, () =>
   Array(COLS).fill(false)
 );
 
+// ===== ISO =====
+function isoPos(x, y) {
+  return {
+    x: (x - y) * (ISO_W / 2),
+    y: (x + y) * (ISO_H / 2)
+  };
+}
+
 // ===== FLOOR =====
 for (let y = 0; y < ROWS; y++) {
   for (let x = 0; x < COLS; x++) {
@@ -46,40 +54,47 @@ for (let y = 0; y < ROWS; y++) {
   }
 }
 
-// ===== FURNI (1x1) =====
+// ===== FURNI MULTI-TILE =====
 const furniList = [
-  { img: "/images/furni/chest.png", x: 5, y: 6, offsetY: 24 }
+  {
+    img: "/images/furni/chest.png",
+    x: 6,
+    y: 7,
+    w: 2,
+    h: 1,
+    offsetY: 32
+  }
 ];
 
-furniList.forEach(f => blocked[f.y][f.x] = true);
+// BLOCCA TUTTE LE TILE OCCUPATE
+furniList.forEach(f => {
+  for (let dy = 0; dy < f.h; dy++) {
+    for (let dx = 0; dx < f.w; dx++) {
+      blocked[f.y + dy][f.x + dx] = true;
+    }
+  }
+});
 
+// DISEGNO FURNI
 furniList.forEach(f => {
   const el = document.createElement("img");
   el.src = f.img;
   el.className = "furni";
 
-  const pos = isoPos(f.x, f.y);
-  el.style.left = pos.x - 32 + "px";
-  el.style.top = pos.y - f.offsetY + "px";
-  el.style.zIndex = f.x + f.y + 5;
+  const base = isoPos(f.x, f.y + f.h - 1);
+  el.style.left = base.x - 32 + "px";
+  el.style.top = base.y - f.offsetY + "px";
+  el.style.zIndex = f.x + f.y + f.w + f.h + 5;
 
   floor.appendChild(el);
 });
-
-// ===== ISO =====
-function isoPos(x, y) {
-  return {
-    x: (x - y) * (ISO_W / 2),
-    y: (x + y) * (ISO_H / 2)
-  };
-}
 
 // ===== PLAYER =====
 function updatePlayer() {
   const pos = isoPos(gridX, gridY);
   player.style.left = pos.x + room.clientWidth / 2 - 40 + "px";
   player.style.top = pos.y + 80 - 120 + "px";
-  player.style.zIndex = gridX + gridY + 10;
+  player.style.zIndex = gridX + gridY + 20;
 }
 
 // ===== PATHFINDING =====
