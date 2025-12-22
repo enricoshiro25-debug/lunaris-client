@@ -7,25 +7,23 @@ body {
   height: 100vh;
 }
 
-/* STANZA ISOMETRICA */
 #room {
   position: relative;
   width: 800px;
   height: 500px;
-  background: #2a2a40;
-  overflow: hidden;
 }
 
-/* TILE DI DEBUG (opzionale, serve per capire l’isometria) */
+/* TILE ISOMETRICA */
 .tile {
   position: absolute;
   width: 64px;
   height: 32px;
-  background: rgba(255,255,255,0.05);
-  transform: rotate(45deg) skew(-26deg);
+  background: rgba(255,255,255,0.08);
+  transform: skewY(-26deg) scaleY(0.5) rotate(45deg);
+  transform-origin: center;
+  cursor: pointer;
 }
 
-/* PLAYER */
 #player {
   position: absolute;
   width: 80px;
