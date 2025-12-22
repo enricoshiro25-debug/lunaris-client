@@ -7,13 +7,31 @@ body {
   height: 100vh;
 }
 
-/* CONTENITORE */
+/* STANZA */
 #room {
   position: relative;
   width: 800px;
   height: 500px;
-  background: #151528;
+  background: #121225;
   overflow: hidden;
+}
+
+/* PAVIMENTO ISOMETRICO */
+#floor {
+  position: absolute;
+  left: 50%;
+  top: 60px;
+  transform: translateX(-50%);
+}
+
+/* TILE VISIVA (ROMBO) */
+.tile {
+  position: absolute;
+  width: 64px;
+  height: 32px;
+  background: #2a2a40;
+  border: 1px solid #3a3a55;
+  transform: skewY(-26deg) scaleY(0.5) rotate(45deg);
 }
 
 /* PLAYER */
