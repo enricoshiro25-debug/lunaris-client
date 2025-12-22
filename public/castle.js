@@ -59,8 +59,9 @@ function updatePlayer() {
   const x = (gridX - gridY) * (TILE_W / 2) + ORIGIN_X;
   const y = (gridX + gridY) * (TILE_H / 2) + ORIGIN_Y;
 
-  player.style.left = x - 40 + "px";
-  player.style.top = y - 90 + "px";
+  // ANCORAGGIO AI PIEDI
+  player.style.left = (x - player.offsetWidth / 2) + "px";
+  player.style.top = (y - player.offsetHeight) + "px";
 }
 
 updatePlayer();
