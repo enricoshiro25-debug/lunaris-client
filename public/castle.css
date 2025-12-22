@@ -20,20 +20,15 @@ body {
   overflow: hidden;
 }
 
-/* CAMERA: SOLO left/top, NO transform */
-#camera {
-  position: absolute;
-  left: 0;
-  top: 0;
-}
-
-/* FLOOR: ancoraggio chiaro */
+/* FLOOR */
 #floor {
   position: absolute;
-  left: 0;
-  top: 0;
+  left: 50%;
+  top: 80px;
+  transform: translateX(-50%);
 }
 
+/* TILE */
 .tile {
   position: absolute;
   width: 64px;
