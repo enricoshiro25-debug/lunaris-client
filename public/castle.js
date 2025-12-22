@@ -60,12 +60,60 @@ for (let y = 0; y < ROWS; y++) {
   }
 }
 
+// ================= OGGETTI STANZA =================
+const furniList = [
+  {
+    id: "chest1",
+    img: "/images/furni/chest.png",
+    x: 6,
+    y: 7,
+    offsetY: 20
+  },
+  {
+    id: "table1",
+    img: "/images/furni/table.png",
+    x: 9,
+    y: 6,
+    offsetY: 28
+  },
+  {
+    id: "bookshelf1",
+    img: "/images/furni/bookshelf.png",
+    x: 4,
+    y: 5,
+    offsetY: 48
+  }
+];
+
 // ================= ISO POSITION =================
 function isoPos(x, y) {
   return {
     x: (x - y) * (ISO_W / 2),
     y: (x + y) * (ISO_H / 2)
   };
+}
+
+// ================= DISEGNO FURNI =================
+function drawFurni() {
+  furniList.forEach(f => {
+    const el = document.createElement("img");
+    el.src = f.img;
+    el.className = "furni";
+
+    const pos = isoPos(f.x, f.y);
+    const floorRect = floor.getBoundingClientRect();
+    const roomRect = room.getBoundingClientRect();
+
+    el.style.left =
+      (floorRect.left - roomRect.left + pos.x - 32) + "px";
+
+    el.style.top =
+      (floorRect.top - roomRect.top + pos.y - f.offsetY) + "px";
+
+    el.style.zIndex = f.x + f.y + 5;
+
+    room.appendChild(el);
+  });
 }
 
 // ================= WALK ANIMATION =================
@@ -144,4 +192,5 @@ floor.addEventListener("click", e => {
 });
 
 // ================= INIT =================
+drawFurni();
 updatePlayer();
