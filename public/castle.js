@@ -37,9 +37,13 @@ let lastX = gridX;
 let lastY = gridY;
 let direction = "front";
 
-let isMoving = false;
 let walkInterval = null;
 let walkFrame = 0;
+
+// ================= COLLISION MAP =================
+const blocked = Array.from({ length: ROWS }, () =>
+  Array(COLS).fill(false)
+);
 
 // ================= PAVIMENTO =================
 floor.innerHTML = "";
@@ -60,30 +64,17 @@ for (let y = 0; y < ROWS; y++) {
   }
 }
 
-// ================= OGGETTI STANZA =================
+// ================= OGGETTI =================
 const furniList = [
-  {
-    id: "chest1",
-    img: "/images/furni/chest.png",
-    x: 6,
-    y: 7,
-    offsetY: 20
-  },
-  {
-    id: "table1",
-    img: "/images/furni/table.png",
-    x: 9,
-    y: 6,
-    offsetY: 28
-  },
-  {
-    id: "bookshelf1",
-    img: "/images/furni/bookshelf.png",
-    x: 4,
-    y: 5,
-    offsetY: 48
-  }
+  { img: "/images/furni/chest.png", x: 6, y: 7, offsetY: 20 },
+  { img: "/images/furni/table.png", x: 9, y: 6, offsetY: 28 },
+  { img: "/images/furni/bookshelf.png", x: 4, y: 5, offsetY: 48 }
 ];
+
+// BLOCCO TILE
+furniList.forEach(f => {
+  blocked[f.y][f.x] = true;
+});
 
 // ================= ISO POSITION =================
 function isoPos(x, y) {
@@ -93,7 +84,7 @@ function isoPos(x, y) {
   };
 }
 
-// ================= DISEGNO FURNI =================
+// ================= FURNI RENDER =================
 function drawFurni() {
   furniList.forEach(f => {
     const el = document.createElement("img");
@@ -105,50 +96,37 @@ function drawFurni() {
     const roomRect = room.getBoundingClientRect();
 
     el.style.left =
-      (floorRect.left - roomRect.left + pos.x - 32) + "px";
-
+      floorRect.left - roomRect.left + pos.x - 32 + "px";
     el.style.top =
-      (floorRect.top - roomRect.top + pos.y - f.offsetY) + "px";
+      floorRect.top - roomRect.top + pos.y - f.offsetY + "px";
 
     el.style.zIndex = f.x + f.y + 5;
-
     room.appendChild(el);
   });
 }
 
-// ================= WALK ANIMATION =================
-function startWalkAnimation() {
+// ================= CAMMINATA =================
+function startWalk() {
   if (walkInterval) return;
-
   walkInterval = setInterval(() => {
     walkFrame = (walkFrame + 1) % 2;
-
     player.style.transform =
-      `scaleX(${direction === "left" ? -1 : 1}) translateY(${walkFrame === 0 ? 0 : -2}px)`;
+      `scaleX(${direction === "left" ? -1 : 1}) translateY(${walkFrame ? -2 : 0}px)`;
   }, 200);
 }
 
-function stopWalkAnimation() {
+function stopWalk() {
   clearInterval(walkInterval);
   walkInterval = null;
-  walkFrame = 0;
-
   player.style.transform =
     `scaleX(${direction === "left" ? -1 : 1})`;
 }
 
 // ================= UPDATE PLAYER =================
 function updatePlayer() {
-  // MOVIMENTO
-  if (gridX !== lastX || gridY !== lastY) {
-    isMoving = true;
-    startWalkAnimation();
-  } else {
-    isMoving = false;
-    stopWalkAnimation();
-  }
+  if (gridX !== lastX || gridY !== lastY) startWalk();
+  else stopWalk();
 
-  // DIREZIONE
   if (gridX > lastX) direction = "right";
   else if (gridX < lastX) direction = "left";
   else if (gridY > lastY) direction = "front";
@@ -157,26 +135,23 @@ function updatePlayer() {
   lastX = gridX;
   lastY = gridY;
 
-  // POSIZIONE ISO
   const pos = isoPos(gridX, gridY);
   const floorRect = floor.getBoundingClientRect();
   const roomRect = room.getBoundingClientRect();
 
   player.style.left =
-    (floorRect.left - roomRect.left + pos.x - player.offsetWidth / 2) + "px";
-
+    floorRect.left - roomRect.left + pos.x - player.offsetWidth / 2 + "px";
   player.style.top =
-    (floorRect.top - roomRect.top + pos.y - player.offsetHeight + 16) + "px";
+    floorRect.top - roomRect.top + pos.y - player.offsetHeight + 16 + "px";
 
-  // PROFONDITÀ
   player.style.zIndex = gridX + gridY + 10;
 }
 
-// ================= CLICK (HABBO STYLE) =================
+// ================= CLICK CON COLLISIONI =================
 floor.addEventListener("click", e => {
-  const floorRect = floor.getBoundingClientRect();
-  const mx = e.clientX - floorRect.left;
-  const my = e.clientY - floorRect.top;
+  const r = floor.getBoundingClientRect();
+  const mx = e.clientX - r.left;
+  const my = e.clientY - r.top;
 
   const isoX = mx / (ISO_W / 2);
   const isoY = my / (ISO_H / 2);
@@ -184,7 +159,11 @@ floor.addEventListener("click", e => {
   const x = Math.floor((isoY + isoX) / 2);
   const y = Math.floor((isoY - isoX) / 2);
 
-  if (x >= 0 && x < COLS && y >= 0 && y < ROWS) {
+  if (
+    x >= 0 && x < COLS &&
+    y >= 0 && y < ROWS &&
+    !blocked[y][x]
+  ) {
     gridX = x;
     gridY = y;
     updatePlayer();
