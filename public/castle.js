@@ -28,8 +28,9 @@ const floor = document.getElementById("floor");
 const player = document.getElementById("player");
 
 // posizione logica (come prima)
-let gridX = 7;
-let gridY = 6;
+let lastX = gridX;
+let lastY = gridY;
+let direction = "front";
 
 // ===== DISEGNO PAVIMENTO =====
 for (let y = 0; y < ROWS; y++) {
@@ -57,6 +58,20 @@ function isoPos(x, y) {
 }
 
 function updatePlayer() {
+  // DIREZIONE
+  if (gridX > lastX) direction = "right";
+  else if (gridX < lastX) direction = "left";
+  else if (gridY > lastY) direction = "front";
+  else if (gridY < lastY) direction = "back";
+
+  lastX = gridX;
+  lastY = gridY;
+
+  // CAMBIA SPRITE
+  document.getElementById("robe").src =
+    `/images/avatars/robe/${direction}.png`;
+
+  // POSIZIONE ISO
   const pos = isoPos(gridX, gridY);
 
   const floorRect = floor.getBoundingClientRect();
@@ -68,7 +83,7 @@ function updatePlayer() {
   player.style.top =
     (floorRect.top - roomRect.top + pos.y - player.offsetHeight + 16) + "px";
 
-  // 🔥 PROFONDITÀ DINAMICA (HABBO STYLE)
+  // PROFONDITÀ
   player.style.zIndex = gridX + gridY + 10;
 }
 
