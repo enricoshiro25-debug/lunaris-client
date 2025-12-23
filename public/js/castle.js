@@ -75,12 +75,23 @@ function createFurni() {
 
     el.src = `images/furni/${f.img}`;
     el.style.position = "absolute";
+
+    // posizione base
     el.style.left = pos.x + "px";
     el.style.top = pos.y + "px";
-    el.style.transform = "translate(-50%, -80%)";
+
+    // 🔑 SCALA FURNI (QUI È LA SOLUZIONE)
+    el.style.width = "64px";      // ← cambia qui se vuoi più grande/piccolo
+    el.style.height = "auto";
+
+    // allineamento isometrico
+    el.style.transform = "translate(-50%, -85%)";
+
     el.style.pointerEvents = "none";
     el.style.imageRendering = "pixelated";
-    el.style.zIndex = f.y * 10;
+
+    // z-index corretto
+    el.style.zIndex = f.y * 10 + 5;
 
     game.appendChild(el);
   });
