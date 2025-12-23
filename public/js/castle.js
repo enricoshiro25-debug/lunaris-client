@@ -1,4 +1,4 @@
-console.log("CASTLE JS 11.6 CARICATO");
+console.log("CASTLE JS 11.7 CARICATO");
 
 // =========================
 // CONFIG
@@ -9,6 +9,24 @@ const MOVE_SPEED = 0.12;
 
 const MAP_COLS = 10;
 const MAP_ROWS = 10;
+
+// =========================
+// MAPPA COLLISIONI
+// 0 = libero
+// 1 = bloccato
+// =========================
+const collisionMap = [
+  [1,1,1,1,1,1,1,1,1,1],
+  [1,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,1,1,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,1],
+  [1,0,1,0,0,0,1,0,0,1],
+  [1,0,0,0,0,0,0,0,0,1],
+  [1,0,0,1,0,0,1,0,0,1],
+  [1,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,1],
+  [1,1,1,1,1,1,1,1,1,1],
+];
 
 // =========================
 // PLAYER
@@ -24,7 +42,6 @@ const player = {
   robe: "robe1"
 };
 
-const game = document.getElementById("game");
 const playerEl = document.getElementById("player");
 const sprite = document.getElementById("playerSprite");
 
@@ -46,13 +63,11 @@ function updateAvatar() {
 }
 
 // =========================
-// POSIZIONE + Z-INDEX
+// POSIZIONE + Z
 // =========================
 function updatePosition() {
   playerEl.style.left = player.screenX + "px";
   playerEl.style.top = player.screenY + "px";
-
-  // ⭐ REGOLA Z-INDEX (CORE)
   playerEl.style.zIndex = player.tileY * 10;
 }
 
@@ -67,7 +82,7 @@ updateAvatar();
 updatePosition();
 
 // =========================
-// CLICK
+// CLICK → CON COLLISIONI
 // =========================
 document.addEventListener("click", e => {
   const dx = e.clientX - window.innerWidth / 2;
@@ -76,7 +91,11 @@ document.addEventListener("click", e => {
   const tx = Math.round((dy / (TILE_H / 2) + dx / (TILE_W / 2)) / 2);
   const ty = Math.round((dy / (TILE_H / 2) - dx / (TILE_W / 2)) / 2);
 
+  // fuori mappa
   if (tx < 0 || ty < 0 || tx >= MAP_COLS || ty >= MAP_ROWS) return;
+
+  // tile bloccata
+  if (collisionMap[ty][tx] === 1) return;
 
   player.targetX = tx;
   player.targetY = ty;
