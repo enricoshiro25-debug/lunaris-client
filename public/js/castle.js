@@ -1,25 +1,38 @@
+// ====== CANVAS SAFE ======
 const canvas = document.getElementById("game");
+
+if (!canvas) {
+  alert("ERRORE: canvas #game non trovato");
+  throw new Error("Canvas non trovato");
+}
+
 const ctx = canvas.getContext("2d");
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+// resize reale (NON solo CSS)
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+window.addEventListener("resize", resize);
+resize();
 
-// TILE
+// ====== COSTANTI ======
 const TILE_W = 64;
 const TILE_H = 32;
 
-// SCALE
 const PLAYER_SCALE = 0.8;
-const FURNI_SCALE  = 0.7;
+const FURNI_SCALE = 0.7;
 
-// MAPPA
 const MAP_W = 10;
 const MAP_H = 10;
 
-// CAMERA
-const camera = { x: canvas.width / 2, y: 150 };
+// ====== CAMERA ======
+const camera = {
+  x: canvas.width / 2,
+  y: 180
+};
 
-// PLAYER
+// ====== PLAYER ======
 const player = {
   x: 4,
   y: 4,
@@ -29,20 +42,20 @@ const player = {
 
 player.img.src = "/images/avatars/robe/s/robe1.png";
 
-// FURNI
-const furni = [
-  { x: 3, y: 4, img: loadFurno("bookshelf.png") },
-  { x: 5, y: 5, img: loadFurno("chest.png") },
-  { x: 6, y: 3, img: loadFurno("table.png") }
-];
-
-function loadFurno(name) {
+// ====== FURNI ======
+function loadImg(path) {
   const img = new Image();
-  img.src = "/images/furni/" + name;
+  img.src = path;
   return img;
 }
 
-// ISO
+const furni = [
+  { x: 3, y: 4, img: loadImg("/images/furni/bookshelf.png") },
+  { x: 5, y: 5, img: loadImg("/images/furni/chest.png") },
+  { x: 6, y: 3, img: loadImg("/images/furni/table.png") }
+];
+
+// ====== ISO ======
 function isoToScreen(x, y) {
   return {
     x: (x - y) * TILE_W / 2 + camera.x,
@@ -50,7 +63,7 @@ function isoToScreen(x, y) {
   };
 }
 
-// CLICK → TILE
+// ====== CLICK ======
 canvas.addEventListener("click", e => {
   const rect = canvas.getBoundingClientRect();
   const mx = e.clientX - rect.left - camera.x;
@@ -65,9 +78,9 @@ canvas.addEventListener("click", e => {
   }
 });
 
-// DRAW
+// ====== GRID ======
 function drawGrid() {
-  ctx.strokeStyle = "rgba(255,255,255,0.05)";
+  ctx.strokeStyle = "rgba(255,255,255,0.08)";
   for (let x = 0; x < MAP_W; x++) {
     for (let y = 0; y < MAP_H; y++) {
       const p = isoToScreen(x, y);
@@ -82,13 +95,14 @@ function drawGrid() {
   }
 }
 
+// ====== LOOP ======
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+
   drawGrid();
 
   const drawables = [];
 
-  // FURNI
   furni.forEach(f => {
     drawables.push({
       z: f.x + f.y,
@@ -101,7 +115,6 @@ function draw() {
     });
   });
 
-  // PLAYER
   drawables.push({
     z: player.x + player.y,
     draw: () => {
