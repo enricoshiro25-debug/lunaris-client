@@ -1,21 +1,29 @@
-console.log("CASTLE JS 11.3 CARICATO");
+console.log("CASTLE JS 11.4 CARICATO");
 
+// =========================
+// CONFIG STANZA
+// =========================
 const TILE_W = 48;
 const TILE_H = 24;
 const MOVE_SPEED = 0.12;
-const ANIM_SPEED = 300; // ms
 
+// dimensioni stanza (tile)
+const MAP_COLS = 10;
+const MAP_ROWS = 10;
+
+// =========================
+// PLAYER
+// =========================
 const player = {
-  tileX: 5,
-  tileY: 5,
-  targetX: 5,
-  targetY: 5,
+  tileX: 4,
+  tileY: 4,
+  targetX: 4,
+  targetY: 4,
   screenX: 0,
   screenY: 0,
   direction: "s",
   robe: "robe1",
-  moving: false,
-  frame: 0
+  moving: false
 };
 
 const playerEl = document.getElementById("player");
@@ -32,10 +40,9 @@ function isoToScreen(x, y) {
 }
 
 // =========================
-// AVATAR + FRAME
+// AVATAR (1 IMMAGINE)
 // =========================
 function updateAvatar() {
-  const frame = player.moving ? player.frame : 0;
   sprite.src = `images/avatars/robe/${player.direction}/${player.robe}.png`;
 }
 
@@ -66,6 +73,15 @@ document.addEventListener("click", e => {
   const tx = Math.round((dy / (TILE_H / 2) + dx / (TILE_W / 2)) / 2);
   const ty = Math.round((dy / (TILE_H / 2) - dx / (TILE_W / 2)) / 2);
 
+  // ❌ FUORI DALLA MAPPA → IGNORA
+  if (
+    tx < 0 || ty < 0 ||
+    tx >= MAP_COLS ||
+    ty >= MAP_ROWS
+  ) {
+    return;
+  }
+
   player.targetX = tx;
   player.targetY = ty;
   player.moving = true;
@@ -83,16 +99,6 @@ document.addEventListener("click", e => {
 });
 
 // =========================
-// ANIMAZIONE PASSO
-// =========================
-setInterval(() => {
-  if (player.moving) {
-    player.frame = player.frame === 0 ? 1 : 0;
-    updateAvatar();
-  }
-}, ANIM_SPEED);
-
-// =========================
 // GAME LOOP
 // =========================
 function gameLoop() {
@@ -107,7 +113,6 @@ function gameLoop() {
     player.screenX = target.x;
     player.screenY = target.y;
     player.moving = false;
-    updateAvatar();
   } else {
     player.screenX += dx * MOVE_SPEED;
     player.screenY += dy * MOVE_SPEED;
