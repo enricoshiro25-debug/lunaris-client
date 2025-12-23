@@ -4,132 +4,144 @@ const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-/* =======================
-   CONFIG ISOMETRICA
-======================= */
+/* ================= CONFIG DEFINITIVA ================= */
+
 const TILE_W = 64;
 const TILE_H = 32;
-const MOVE_SPEED = 0.08; // velocità reale (NO TELEPORT)
 
-/* =======================
-   UTILS
-======================= */
-function isoToScreen(x, y) {
+const SCALE_PLAYER = 0.45;
+const SCALE_FURNI  = 0.40;
+
+const GRID_W = 12;
+const GRID_H = 12;
+
+/* ================= CAMERA ================= */
+
+const camera = { x: canvas.width / 2, y: 150 };
+
+/* ================= UTILS ================= */
+
+function isoToScreen(ix, iy) {
   return {
-    x: (x - y) * (TILE_W / 2) + canvas.width / 2,
-    y: (x + y) * (TILE_H / 2) + 150
+    x: (ix - iy) * TILE_W / 2 + camera.x,
+    y: (ix + iy) * TILE_H / 2 + camera.y
   };
 }
 
 function screenToIso(x, y) {
-  const cx = x - canvas.width / 2;
-  const cy = y - 150;
+  x -= camera.x;
+  y -= camera.y;
+
   return {
-    x: (cx / (TILE_W / 2) + cy / (TILE_H / 2)) / 2,
-    y: (cy / (TILE_H / 2) - cx / (TILE_W / 2)) / 2
+    x: Math.floor((y / (TILE_H / 2) + x / (TILE_W / 2)) / 2),
+    y: Math.floor((y / (TILE_H / 2) - x / (TILE_W / 2)) / 2)
   };
 }
 
-/* =======================
-   PLAYER
-======================= */
-const player = {
-  x: 5,
-  y: 5,
-  tx: 5,
-  ty: 5,
-  dir: "s",
-  img: new Image()
-};
+function drawSprite(img, ix, iy, scale, footOffset = 0) {
+  if (!img.complete) return;
+  const p = isoToScreen(ix, iy);
 
-function loadPlayer() {
-  player.img.src = `/images/avatars/robe/${player.dir}/robe1.png`;
-}
-loadPlayer();
+  const w = img.width * scale;
+  const h = img.height * scale;
 
-/* =======================
-   FURNI
-======================= */
-const furni = [
-  { x: 4, y: 6, img: loadImg("/images/furni/bookshelf.png") },
-  { x: 6, y: 6, img: loadImg("/images/furni/chest.png") },
-  { x: 5, y: 4, img: loadImg("/images/furni/table.png") }
-];
-
-function loadImg(src) {
-  const i = new Image();
-  i.src = src;
-  return i;
-}
-
-/* =======================
-   CLICK MOVIMENTO
-======================= */
-canvas.addEventListener("click", e => {
-  const rect = canvas.getBoundingClientRect();
-  const iso = screenToIso(e.clientX - rect.left, e.clientY - rect.top);
-
-  player.tx = Math.round(iso.x);
-  player.ty = Math.round(iso.y);
-
-  const dx = player.tx - player.x;
-  const dy = player.ty - player.y;
-
-  if (Math.abs(dx) > Math.abs(dy)) {
-    player.dir = dx > 0 ? "e" : "w";
-  } else {
-    player.dir = dy > 0 ? "s" : "n";
-  }
-
-  loadPlayer();
-});
-
-/* =======================
-   UPDATE (MOVIMENTO REALE)
-======================= */
-function update() {
-  const dx = player.tx - player.x;
-  const dy = player.ty - player.y;
-
-  if (Math.abs(dx) > 0.01) player.x += dx * MOVE_SPEED;
-  if (Math.abs(dy) > 0.01) player.y += dy * MOVE_SPEED;
-}
-
-/* =======================
-   DRAW
-======================= */
-function drawSprite(img, x, y, foot = 6) {
-  const p = isoToScreen(x, y);
   ctx.drawImage(
     img,
-    p.x - img.width / 2,
-    p.y - img.height + TILE_H + foot
+    p.x - w / 2,
+    p.y - h + TILE_H + footOffset,
+    w,
+    h
   );
 }
 
+/* ================= PLAYER ================= */
+
+const player = {
+  x: 6,
+  y: 6,
+  dir: "s",
+  target: null,
+  speed: 0.05,
+  img: new Image()
+};
+
+player.img.src = "/images/avatars/robe/s/robe1.png";
+
+/* ================= FURNI ================= */
+
+const furni = [
+  { x: 4, y: 6, img: loadFurni("bookshelf.png") },
+  { x: 6, y: 7, img: loadFurni("chest.png") },
+  { x: 7, y: 5, img: loadFurni("table.png") }
+];
+
+function loadFurni(name) {
+  const i = new Image();
+  i.src = `/images/furni/${name}`;
+  return i;
+}
+
+/* ================= CLICK MOVE ================= */
+
+canvas.addEventListener("click", e => {
+  const rect = canvas.getBoundingClientRect();
+  const iso = screenToIso(
+    e.clientX - rect.left,
+    e.clientY - rect.top
+  );
+
+  if (iso.x < 0 || iso.y < 0 || iso.x >= GRID_W || iso.y >= GRID_H) return;
+
+  player.target = { x: iso.x, y: iso.y };
+
+  const dx = iso.x - player.x;
+  const dy = iso.y - player.y;
+
+  if (Math.abs(dx) > Math.abs(dy))
+    player.dir = dx > 0 ? "e" : "w";
+  else
+    player.dir = dy > 0 ? "s" : "n";
+
+  player.img.src = `/images/avatars/robe/${player.dir}/robe1.png`;
+});
+
+/* ================= UPDATE ================= */
+
+function update() {
+  if (player.target) {
+    const dx = player.target.x - player.x;
+    const dy = player.target.y - player.y;
+
+    if (Math.abs(dx) < 0.02 && Math.abs(dy) < 0.02) {
+      player.x = player.target.x;
+      player.y = player.target.y;
+      player.target = null;
+    } else {
+      player.x += Math.sign(dx) * player.speed;
+      player.y += Math.sign(dy) * player.speed;
+    }
+  }
+}
+
+/* ================= DRAW ================= */
+
 function drawGrid() {
-  for (let x = 0; x < 10; x++) {
-    for (let y = 0; y < 10; y++) {
+  ctx.strokeStyle = "rgba(255,255,255,0.05)";
+
+  for (let x = 0; x <= GRID_W; x++) {
+    for (let y = 0; y <= GRID_H; y++) {
       const p = isoToScreen(x, y);
-      ctx.strokeStyle = "rgba(255,255,255,0.05)";
       ctx.beginPath();
       ctx.moveTo(p.x, p.y);
       ctx.lineTo(p.x + TILE_W / 2, p.y + TILE_H / 2);
-      ctx.lineTo(p.x, p.y + TILE_H);
-      ctx.lineTo(p.x - TILE_W / 2, p.y + TILE_H / 2);
-      ctx.closePath();
       ctx.stroke();
     }
   }
 }
 
-/* =======================
-   LOOP
-======================= */
-function loop() {
+function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  update();
   drawGrid();
 
   const drawables = [];
@@ -137,18 +149,24 @@ function loop() {
   furni.forEach(f => {
     drawables.push({
       z: f.x + f.y,
-      draw: () => drawSprite(f.img, f.x, f.y, 8)
+      draw: () => drawSprite(f.img, f.x, f.y, SCALE_FURNI, 6)
     });
   });
 
   drawables.push({
     z: player.x + player.y + 0.5,
-    draw: () => drawSprite(player.img, player.x, player.y, 6)
+    draw: () => drawSprite(player.img, player.x, player.y, SCALE_PLAYER, 4)
   });
 
   drawables.sort((a, b) => a.z - b.z);
   drawables.forEach(d => d.draw());
+}
 
+/* ================= LOOP ================= */
+
+function loop() {
+  update();
+  draw();
   requestAnimationFrame(loop);
 }
 
