@@ -1,10 +1,10 @@
 const map = document.getElementById("map");
 
-/* ===== ISO COSTANTI ===== */
+/* ===== COSTANTI ISO ===== */
 const TILE_W = 64;
 const TILE_H = 32;
-const ORIGIN_X = 1000;
-const ORIGIN_Y = 350;
+const ORIGIN_X = window.innerWidth / 2;
+const ORIGIN_Y = 200;
 
 /* ===== ISO → SCREEN ===== */
 function isoToScreen(x, y) {
@@ -14,22 +14,22 @@ function isoToScreen(x, y) {
   };
 }
 
-/* ===== GRIGLIA ===== */
-for (let x = 0; x < 8; x++) {
-  for (let y = 0; y < 8; y++) {
-    const tile = document.createElement("div");
-    tile.className = "tile";
+/* ===== DISEGNA GRIGLIA ===== */
+for (let x = 0; x < 7; x++) {
+  for (let y = 0; y < 7; y++) {
+    const t = document.createElement("div");
+    t.className = "tile";
     const p = isoToScreen(x, y);
-    tile.style.left = p.x + "px";
-    tile.style.top = p.y + "px";
-    map.appendChild(tile);
+    t.style.left = p.x + "px";
+    t.style.top = p.y + "px";
+    map.appendChild(t);
   }
 }
 
 /* ===== PLAYER ===== */
 const player = {
-  x: 4,
-  y: 4,
+  x: 3,
+  y: 3,
   dir: "s"
 };
 
@@ -43,17 +43,15 @@ function updateAvatar() {
 
 function drawPlayer() {
   const p = isoToScreen(player.x, player.y);
-
-  // ⬇️ ANCORAGGIO AI PIEDI (FIX)
   avatar.style.left = (p.x - 32) + "px";
-  avatar.style.top  = (p.y - 88) + "px";
+  avatar.style.top  = (p.y - 96) + "px"; // piedi sulla tile
 }
 
 updateAvatar();
 drawPlayer();
 
 /* ===== FURNI ===== */
-function addFurni(src, x, y, w, h, footOffset) {
+function furni(src, x, y, w, h, foot) {
   const img = document.createElement("img");
   img.src = src;
   img.className = "furni";
@@ -61,22 +59,19 @@ function addFurni(src, x, y, w, h, footOffset) {
   img.style.height = h + "px";
 
   const p = isoToScreen(x, y);
-
-  // ⬇️ ANCORAGGIO AI PIEDI (FIX)
   img.style.left = (p.x - w / 2) + "px";
-  img.style.top  = (p.y - h + footOffset) + "px";
+  img.style.top  = (p.y - h + foot) + "px";
 
   map.appendChild(img);
 }
 
-/* ===== FURNI POSIZIONATI CORRETTAMENTE ===== */
-addFurni("/images/furni/bookshelf.png", 3, 3, 120, 200, 20);
-addFurni("/images/furni/table.png",     5, 3, 140, 110, 18);
-addFurni("/images/furni/chest.png",     4, 4, 120, 80,  12);
+furni("/images/furni/bookshelf.png", 2, 2, 120, 200, 20);
+furni("/images/furni/table.png",     4, 2, 140, 110, 18);
+furni("/images/furni/chest.png",     3, 3, 120, 80,  12);
 
-/* ===== MOVIMENTO (NO TELEPORT) ===== */
+/* ===== CLICK MOVE (TEST) ===== */
 map.addEventListener("click", () => {
-  if (player.x < 7) player.x++;
-  if (player.y < 7) player.y++;
+  player.x++;
+  player.y++;
   drawPlayer();
 });
