@@ -1,4 +1,4 @@
-console.log("CASTLE JS 11.7 CARICATO");
+console.log("CASTLE JS 11.8 CARICATO");
 
 // =========================
 // CONFIG
@@ -34,12 +34,11 @@ const collisionMap = [
 const player = {
   tileX: 4,
   tileY: 4,
-  targetX: 4,
-  targetY: 4,
   screenX: 0,
   screenY: 0,
   direction: "s",
-  robe: "robe1"
+  robe: "robe1",
+  path: []
 };
 
 const playerEl = document.getElementById("player");
@@ -77,12 +76,59 @@ function updatePosition() {
 const start = isoToScreen(player.tileX, player.tileY);
 player.screenX = start.x;
 player.screenY = start.y;
-
 updateAvatar();
 updatePosition();
 
 // =========================
-// CLICK → CON COLLISIONI
+// PATHFINDING (BFS)
+// =========================
+function findPath(sx, sy, tx, ty) {
+  const queue = [{ x: sx, y: sy, path: [] }];
+  const visited = Array.from({ length: MAP_ROWS }, () =>
+    Array(MAP_COLS).fill(false)
+  );
+
+  visited[sy][sx] = true;
+
+  const dirs = [
+    { x: 1, y: 0 },
+    { x: -1, y: 0 },
+    { x: 0, y: 1 },
+    { x: 0, y: -1 }
+  ];
+
+  while (queue.length) {
+    const cur = queue.shift();
+
+    if (cur.x === tx && cur.y === ty) {
+      return cur.path;
+    }
+
+    for (const d of dirs) {
+      const nx = cur.x + d.x;
+      const ny = cur.y + d.y;
+
+      if (
+        nx >= 0 && ny >= 0 &&
+        nx < MAP_COLS && ny < MAP_ROWS &&
+        !visited[ny][nx] &&
+        collisionMap[ny][nx] === 0
+      ) {
+        visited[ny][nx] = true;
+        queue.push({
+          x: nx,
+          y: ny,
+          path: [...cur.path, { x: nx, y: ny }]
+        });
+      }
+    }
+  }
+
+  return null;
+}
+
+// =========================
+// CLICK → PATH
 // =========================
 document.addEventListener("click", e => {
   const dx = e.clientX - window.innerWidth / 2;
@@ -91,44 +137,48 @@ document.addEventListener("click", e => {
   const tx = Math.round((dy / (TILE_H / 2) + dx / (TILE_W / 2)) / 2);
   const ty = Math.round((dy / (TILE_H / 2) - dx / (TILE_W / 2)) / 2);
 
-  // fuori mappa
-  if (tx < 0 || ty < 0 || tx >= MAP_COLS || ty >= MAP_ROWS) return;
+  if (
+    tx < 0 || ty < 0 ||
+    tx >= MAP_COLS || ty >= MAP_ROWS ||
+    collisionMap[ty][tx] === 1
+  ) return;
 
-  // tile bloccata
-  if (collisionMap[ty][tx] === 1) return;
-
-  player.targetX = tx;
-  player.targetY = ty;
-
-  const diffX = tx - player.tileX;
-  const diffY = ty - player.tileY;
-
-  if (Math.abs(diffX) > Math.abs(diffY)) {
-    player.direction = diffX > 0 ? "e" : "w";
-  } else {
-    player.direction = diffY > 0 ? "s" : "n";
-  }
-
-  updateAvatar();
+  const path = findPath(player.tileX, player.tileY, tx, ty);
+  if (path) player.path = path;
 });
 
 // =========================
 // GAME LOOP
 // =========================
 function gameLoop() {
-  const target = isoToScreen(player.targetX, player.targetY);
+  if (player.path.length > 0) {
+    const next = player.path[0];
+    const target = isoToScreen(next.x, next.y);
 
-  const dx = target.x - player.screenX;
-  const dy = target.y - player.screenY;
+    const dx = target.x - player.screenX;
+    const dy = target.y - player.screenY;
 
-  if (Math.abs(dx) < 1 && Math.abs(dy) < 1) {
-    player.tileX = player.targetX;
-    player.tileY = player.targetY;
-    player.screenX = target.x;
-    player.screenY = target.y;
-  } else {
-    player.screenX += dx * MOVE_SPEED;
-    player.screenY += dy * MOVE_SPEED;
+    if (Math.abs(dx) < 1 && Math.abs(dy) < 1) {
+      player.tileX = next.x;
+      player.tileY = next.y;
+      player.screenX = target.x;
+      player.screenY = target.y;
+      player.path.shift();
+    } else {
+      player.screenX += dx * MOVE_SPEED;
+      player.screenY += dy * MOVE_SPEED;
+    }
+
+    const diffX = next.x - player.tileX;
+    const diffY = next.y - player.tileY;
+
+    if (Math.abs(diffX) > Math.abs(diffY)) {
+      player.direction = diffX > 0 ? "e" : "w";
+    } else {
+      player.direction = diffY > 0 ? "s" : "n";
+    }
+
+    updateAvatar();
   }
 
   updatePosition();
