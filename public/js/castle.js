@@ -1,12 +1,12 @@
 const map = document.getElementById("map");
 
-/* ===== COSTANTI ISO ===== */
+/* ===== ISO COSTANTI ===== */
 const TILE_W = 64;
 const TILE_H = 32;
 const ORIGIN_X = 1000;
-const ORIGIN_Y = 300;
+const ORIGIN_Y = 350;
 
-/* ===== ISO CONVERSION ===== */
+/* ===== ISO → SCREEN ===== */
 function isoToScreen(x, y) {
   return {
     x: (x - y) * (TILE_W / 2) + ORIGIN_X,
@@ -35,18 +35,25 @@ const player = {
 
 const avatar = document.createElement("img");
 avatar.className = "avatar";
-avatar.src = "/images/avatars/robe/s/robe1.png";
 map.appendChild(avatar);
+
+function updateAvatar() {
+  avatar.src = `/images/avatars/robe/${player.dir}/robe1.png`;
+}
 
 function drawPlayer() {
   const p = isoToScreen(player.x, player.y);
+
+  // ⬇️ ANCORAGGIO AI PIEDI (FIX)
   avatar.style.left = (p.x - 32) + "px";
-  avatar.style.top = (p.y - 80) + "px";
+  avatar.style.top  = (p.y - 88) + "px";
 }
+
+updateAvatar();
 drawPlayer();
 
 /* ===== FURNI ===== */
-function addFurni(src, x, y, w, h, offsetY = 0) {
+function addFurni(src, x, y, w, h, footOffset) {
   const img = document.createElement("img");
   img.src = src;
   img.className = "furni";
@@ -54,22 +61,20 @@ function addFurni(src, x, y, w, h, offsetY = 0) {
   img.style.height = h + "px";
 
   const p = isoToScreen(x, y);
+
+  // ⬇️ ANCORAGGIO AI PIEDI (FIX)
   img.style.left = (p.x - w / 2) + "px";
-  img.style.top = (p.y - h + offsetY) + "px";
+  img.style.top  = (p.y - h + footOffset) + "px";
 
   map.appendChild(img);
 }
 
-/* BOOKSHELF */
+/* ===== FURNI POSIZIONATI CORRETTAMENTE ===== */
 addFurni("/images/furni/bookshelf.png", 3, 3, 120, 200, 20);
+addFurni("/images/furni/table.png",     5, 3, 140, 110, 18);
+addFurni("/images/furni/chest.png",     4, 4, 120, 80,  12);
 
-/* TABLE */
-addFurni("/images/furni/table.png", 5, 3, 140, 110, 20);
-
-/* CHEST */
-addFurni("/images/furni/chest.png", 4, 4, 120, 80, 10);
-
-/* ===== CLICK MOVE (LENTO, NO TELEPORT) ===== */
+/* ===== MOVIMENTO (NO TELEPORT) ===== */
 map.addEventListener("click", () => {
   if (player.x < 7) player.x++;
   if (player.y < 7) player.y++;
