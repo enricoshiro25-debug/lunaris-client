@@ -2,19 +2,14 @@
 const username = localStorage.getItem("username");
 if (!username) window.location.href = "login.html";
 
-// ===== AVATAR =====
-const avatar = JSON.parse(localStorage.getItem("avatar_" + username)) || {
+// ===== AVATAR DATA =====
+const avatar = {
   face: 0,
   robe: 0
 };
 
-const faces = ["face1.png", "face2.png", "face3.png"];
-const robes = ["robe1.png", "robe2.png", "robe3.png"];
-
-document.getElementById("face").src =
-  "/images/avatars/face/" + faces[avatar.face];
-document.getElementById("robe").src =
-  "/images/avatars/robe/" + robes[avatar.robe];
+const faces = ["face1.png", "face2.png"];
+const robes = ["robe1.png", "robe2.png"];
 
 // ===== MAPPA =====
 const COLS = 16;
@@ -28,19 +23,7 @@ const player = document.getElementById("player");
 
 let gridX = 7;
 let gridY = 6;
-
-// ===== COLLISIONI =====
-const blocked = Array.from({ length: ROWS }, () =>
-  Array(COLS).fill(false)
-);
-
-// ===== ISO =====
-function isoPos(x, y) {
-  return {
-    x: (x - y) * (ISO_W / 2),
-    y: (x + y) * (ISO_H / 2)
-  };
-}
+let direction = "s"; // s n e w
 
 // ===== FLOOR =====
 for (let y = 0; y < ROWS; y++) {
@@ -54,109 +37,40 @@ for (let y = 0; y < ROWS; y++) {
   }
 }
 
-// ===== FURNI MULTI-TILE =====
-const furniList = [
-  {
-    img: "/images/furni/chest.png",
-    x: 6,
-    y: 7,
-    w: 2,
-    h: 1,
-    offsetY: 32
-  }
-];
+// ===== ISO =====
+function isoPos(x, y) {
+  return {
+    x: (x - y) * (ISO_W / 2),
+    y: (x + y) * (ISO_H / 2)
+  };
+}
 
-// BLOCCA TUTTE LE TILE OCCUPATE
-furniList.forEach(f => {
-  for (let dy = 0; dy < f.h; dy++) {
-    for (let dx = 0; dx < f.w; dx++) {
-      blocked[f.y + dy][f.x + dx] = true;
-    }
-  }
-});
-
-// DISEGNO FURNI
-furniList.forEach(f => {
-  const el = document.createElement("img");
-  el.src = f.img;
-  el.className = "furni";
-
-  const base = isoPos(f.x, f.y + f.h - 1);
-  el.style.left = base.x - 32 + "px";
-  el.style.top = base.y - f.offsetY + "px";
-  el.style.zIndex = f.x + f.y + f.w + f.h + 5;
-
-  floor.appendChild(el);
-});
+// ===== AVATAR =====
+function updateAvatar() {
+  document.getElementById("face").src =
+    `/images/avatars/face/${direction}/${faces[avatar.face]}`;
+  document.getElementById("robe").src =
+    `/images/avatars/robe/${direction}/${robes[avatar.robe]}`;
+}
 
 // ===== PLAYER =====
 function updatePlayer() {
   const pos = isoPos(gridX, gridY);
   player.style.left = pos.x + room.clientWidth / 2 - 40 + "px";
   player.style.top = pos.y + 80 - 120 + "px";
-  player.style.zIndex = gridX + gridY + 20;
+  player.style.zIndex = gridX + gridY + 10;
 }
 
-// ===== PATHFINDING =====
-function findPath(sx, sy, ex, ey) {
-  const queue = [{ x: sx, y: sy, path: [] }];
-  const visited = Array.from({ length: ROWS }, () =>
-    Array(COLS).fill(false)
-  );
-  visited[sy][sx] = true;
-
-  const dirs = [
-    { x: 1, y: 0 }, { x: -1, y: 0 },
-    { x: 0, y: 1 }, { x: 0, y: -1 }
-  ];
-
-  while (queue.length) {
-    const cur = queue.shift();
-    if (cur.x === ex && cur.y === ey) return cur.path;
-
-    for (const d of dirs) {
-      const nx = cur.x + d.x;
-      const ny = cur.y + d.y;
-
-      if (
-        nx >= 0 && nx < COLS &&
-        ny >= 0 && ny < ROWS &&
-        !blocked[ny][nx] &&
-        !visited[ny][nx]
-      ) {
-        visited[ny][nx] = true;
-        queue.push({
-          x: nx,
-          y: ny,
-          path: [...cur.path, { x: nx, y: ny }]
-        });
-      }
-    }
-  }
-  return [];
-}
-
-let walking = false;
-
-function walkPath(path) {
-  if (!path.length) return;
-  walking = true;
-
-  const step = path.shift();
-  gridX = step.x;
-  gridY = step.y;
-  updatePlayer();
-
-  setTimeout(() => {
-    walking = false;
-    walkPath(path);
-  }, 220);
+// ===== DIRECTION =====
+function updateDirection(nx, ny) {
+  if (nx > gridX) direction = "e";
+  else if (nx < gridX) direction = "w";
+  else if (ny > gridY) direction = "s";
+  else if (ny < gridY) direction = "n";
 }
 
 // ===== CLICK =====
 floor.addEventListener("click", e => {
-  if (walking) return;
-
   const r = floor.getBoundingClientRect();
   const mx = e.clientX - r.left;
   const my = e.clientY - r.top;
@@ -167,14 +81,15 @@ floor.addEventListener("click", e => {
   const x = Math.floor((isoY + isoX) / 2);
   const y = Math.floor((isoY - isoX) / 2);
 
-  if (
-    x >= 0 && x < COLS &&
-    y >= 0 && y < ROWS &&
-    !blocked[y][x]
-  ) {
-    walkPath(findPath(gridX, gridY, x, y));
+  if (x >= 0 && x < COLS && y >= 0 && y < ROWS) {
+    updateDirection(x, y);
+    gridX = x;
+    gridY = y;
+    updateAvatar();
+    updatePlayer();
   }
 });
 
 // ===== INIT =====
+updateAvatar();
 updatePlayer();
