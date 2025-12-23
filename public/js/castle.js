@@ -4,16 +4,20 @@ const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-/* --- MAP --- */
+/* =========================
+   MAP
+========================= */
 const TILE_W = 64;
 const TILE_H = 32;
 const MAP_W = 10;
 const MAP_H = 10;
 
 const ORIGIN_X = canvas.width / 2;
-const ORIGIN_Y = 180;
+const ORIGIN_Y = 200;
 
-/* --- PLAYER --- */
+/* =========================
+   PLAYER
+========================= */
 const player = {
   x: 4,
   y: 4,
@@ -29,7 +33,9 @@ function loadPlayer() {
 }
 loadPlayer();
 
-/* --- FURNI --- */
+/* =========================
+   FURNI (1 tile each)
+========================= */
 const furni = [
   { x: 3, y: 4, w: 64, h: 96, src: "images/furni/bookshelf.png" },
   { x: 5, y: 5, w: 64, h: 64, src: "images/furni/chest.png" },
@@ -41,7 +47,17 @@ furni.forEach(f => {
   f.img.src = f.src;
 });
 
-/* --- ISO UTILS --- */
+/* =========================
+   COLLISION MAP
+========================= */
+function isBlocked(x, y) {
+  if (x < 0 || y < 0 || x >= MAP_W || y >= MAP_H) return true;
+  return furni.some(f => f.x === x && f.y === y);
+}
+
+/* =========================
+   ISO UTILS
+========================= */
 function isoToScreen(x, y) {
   return {
     x: (x - y) * TILE_W / 2 + ORIGIN_X,
@@ -57,11 +73,13 @@ function screenToIso(mx, my) {
   return { x, y };
 }
 
-/* --- CLICK --- */
+/* =========================
+   CLICK MOVE
+========================= */
 canvas.addEventListener("click", e => {
   const t = screenToIso(e.offsetX, e.offsetY);
 
-  if (t.x < 0 || t.y < 0 || t.x >= MAP_W || t.y >= MAP_H) return;
+  if (isBlocked(t.x, t.y)) return;
 
   if (t.x > player.x) player.dir = "e";
   else if (t.x < player.x) player.dir = "w";
@@ -73,13 +91,17 @@ canvas.addEventListener("click", e => {
   loadPlayer();
 });
 
-/* --- UPDATE PLAYER (SMOOTH MOVE) --- */
+/* =========================
+   UPDATE
+========================= */
 function updatePlayer() {
   player.px += (player.x - player.px) * player.speed;
   player.py += (player.y - player.py) * player.speed;
 }
 
-/* --- DRAW GRID --- */
+/* =========================
+   DRAW GRID
+========================= */
 function drawGrid() {
   ctx.strokeStyle = "rgba(255,255,255,0.04)";
   for (let y = 0; y < MAP_H; y++) {
@@ -96,12 +118,9 @@ function drawGrid() {
   }
 }
 
-/* --- SORT BY DEPTH --- */
-function getDepth(o) {
-  return o.y + (o.py ?? 0);
-}
-
-/* --- DRAW --- */
+/* =========================
+   DRAW SORTED
+========================= */
 function drawScene() {
   const objects = [];
 
@@ -124,7 +143,9 @@ function drawScene() {
   objects.forEach(o => o.draw());
 }
 
-/* --- LOOP --- */
+/* =========================
+   LOOP
+========================= */
 function loop() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   updatePlayer();
