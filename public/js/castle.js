@@ -1,4 +1,5 @@
 console.log("CASTLE JS CARICATO");
+
 const TILE_W = 48;
 const TILE_H = 24;
 
@@ -20,10 +21,11 @@ function isoToScreen(x, y) {
   };
 }
 
-// === AVATAR (ADATTATO ALLE TUE CARTELLE) ===
+// AVATAR
 function updateAvatar() {
-  sprite.src =
-    `/images/avatars/robe/${player.direction}/${player.robe}.png`;
+  const path = `images/avatars/robe/${player.direction}/${player.robe}.png`;
+  console.log("CARICO SPRITE:", path);
+  sprite.src = path;
 }
 
 // POSIZIONE
@@ -37,16 +39,16 @@ function updatePosition() {
 updateAvatar();
 updatePosition();
 
-// CLICK MOVIMENTO
+// CLICK
 document.addEventListener("click", e => {
   const dx = e.clientX - window.innerWidth / 2;
   const dy = e.clientY - 150;
 
-  const tileX = Math.round((dy / (TILE_H / 2) + dx / (TILE_W / 2)) / 2);
-  const tileY = Math.round((dy / (TILE_H / 2) - dx / (TILE_W / 2)) / 2);
+  const tx = Math.round((dy / (TILE_H / 2) + dx / (TILE_W / 2)) / 2);
+  const ty = Math.round((dy / (TILE_H / 2) - dx / (TILE_W / 2)) / 2);
 
-  const diffX = tileX - player.tileX;
-  const diffY = tileY - player.tileY;
+  const diffX = tx - player.tileX;
+  const diffY = ty - player.tileY;
 
   if (Math.abs(diffX) > Math.abs(diffY)) {
     player.direction = diffX > 0 ? "e" : "w";
@@ -54,8 +56,8 @@ document.addEventListener("click", e => {
     player.direction = diffY > 0 ? "s" : "n";
   }
 
-  player.tileX = tileX;
-  player.tileY = tileY;
+  player.tileX = tx;
+  player.tileY = ty;
 
   updateAvatar();
   updatePosition();
