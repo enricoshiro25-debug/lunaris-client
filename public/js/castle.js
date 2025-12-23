@@ -1,13 +1,12 @@
-console.log("CASTLE JS 11.4 CARICATO");
+console.log("CASTLE JS 11.5 CARICATO");
 
 // =========================
-// CONFIG STANZA
+// CONFIG
 // =========================
 const TILE_W = 48;
 const TILE_H = 24;
 const MOVE_SPEED = 0.12;
 
-// dimensioni stanza (tile)
 const MAP_COLS = 10;
 const MAP_ROWS = 10;
 
@@ -22,10 +21,10 @@ const player = {
   screenX: 0,
   screenY: 0,
   direction: "s",
-  robe: "robe1",
-  moving: false
+  robe: "robe1"
 };
 
+const game = document.getElementById("game");
 const playerEl = document.getElementById("player");
 const sprite = document.getElementById("playerSprite");
 
@@ -40,7 +39,7 @@ function isoToScreen(x, y) {
 }
 
 // =========================
-// AVATAR (1 IMMAGINE)
+// AVATAR
 // =========================
 function updateAvatar() {
   sprite.src = `images/avatars/robe/${player.direction}/${player.robe}.png`;
@@ -55,16 +54,42 @@ function updatePosition() {
 }
 
 // =========================
+// GRIGLIA DEBUG
+// =========================
+function drawGrid() {
+  for (let y = 0; y < MAP_ROWS; y++) {
+    for (let x = 0; x < MAP_COLS; x++) {
+      const tile = document.createElement("div");
+      const pos = isoToScreen(x, y);
+
+      tile.style.position = "absolute";
+      tile.style.left = pos.x + "px";
+      tile.style.top = pos.y + "px";
+      tile.style.width = TILE_W + "px";
+      tile.style.height = TILE_H + "px";
+      tile.style.transform = "translate(-50%, -50%) rotate(45deg) skewY(-26deg)";
+      tile.style.border = "1px solid rgba(255,255,255,0.15)";
+      tile.style.pointerEvents = "none";
+
+      game.appendChild(tile);
+    }
+  }
+}
+
+// =========================
 // INIT
 // =========================
+drawGrid();
+
 const start = isoToScreen(player.tileX, player.tileY);
 player.screenX = start.x;
 player.screenY = start.y;
+
 updateAvatar();
 updatePosition();
 
 // =========================
-// CLICK → DESTINAZIONE
+// CLICK
 // =========================
 document.addEventListener("click", e => {
   const dx = e.clientX - window.innerWidth / 2;
@@ -73,18 +98,10 @@ document.addEventListener("click", e => {
   const tx = Math.round((dy / (TILE_H / 2) + dx / (TILE_W / 2)) / 2);
   const ty = Math.round((dy / (TILE_H / 2) - dx / (TILE_W / 2)) / 2);
 
-  // ❌ FUORI DALLA MAPPA → IGNORA
-  if (
-    tx < 0 || ty < 0 ||
-    tx >= MAP_COLS ||
-    ty >= MAP_ROWS
-  ) {
-    return;
-  }
+  if (tx < 0 || ty < 0 || tx >= MAP_COLS || ty >= MAP_ROWS) return;
 
   player.targetX = tx;
   player.targetY = ty;
-  player.moving = true;
 
   const diffX = tx - player.tileX;
   const diffY = ty - player.tileY;
@@ -112,7 +129,6 @@ function gameLoop() {
     player.tileY = player.targetY;
     player.screenX = target.x;
     player.screenY = target.y;
-    player.moving = false;
   } else {
     player.screenX += dx * MOVE_SPEED;
     player.screenY += dy * MOVE_SPEED;
