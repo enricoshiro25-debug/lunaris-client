@@ -1,173 +1,96 @@
-const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
-
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-/* ================= CONFIG DEFINITIVA ================= */
+const map = document.getElementById("map");
 
 const TILE_W = 64;
 const TILE_H = 32;
 
-const SCALE_PLAYER = 0.41;
-const SCALE_FURNI  = 0.33;
+const MAP_W = 10;
+const MAP_H = 10;
 
-const GRID_W = 12;
-const GRID_H = 12;
-
-/* ================= CAMERA ================= */
-
-const camera = { x: canvas.width / 2, y: 150 };
-
-/* ================= UTILS ================= */
-
-function isoToScreen(ix, iy) {
+// ---------- ISO UTILS ----------
+function isoToScreen(x, y) {
   return {
-    x: (ix - iy) * TILE_W / 2 + camera.x,
-    y: (ix + iy) * TILE_H / 2 + camera.y
+    x: (x - y) * (TILE_W / 2) + 1000,
+    y: (x + y) * (TILE_H / 2) + 300
   };
 }
 
-function screenToIso(x, y) {
-  x -= camera.x;
-  y -= camera.y;
-
-  return {
-    x: Math.floor((y / (TILE_H / 2) + x / (TILE_W / 2)) / 2),
-    y: Math.floor((y / (TILE_H / 2) - x / (TILE_W / 2)) / 2)
-  };
+// ---------- GRID ----------
+for (let x = 0; x < MAP_W; x++) {
+  for (let y = 0; y < MAP_H; y++) {
+    const tile = document.createElement("div");
+    tile.className = "tile";
+    const pos = isoToScreen(x, y);
+    tile.style.left = pos.x + "px";
+    tile.style.top = pos.y + "px";
+    map.appendChild(tile);
+  }
 }
 
-function drawSprite(img, ix, iy, scale, footOffset = 0) {
-  if (!img.complete) return;
-  const p = isoToScreen(ix, iy);
-
-  const w = img.width * scale;
-  const h = img.height * scale;
-
-  ctx.drawImage(
-    img,
-    p.x - w / 2,
-    p.y - h + TILE_H + footOffset,
-    w,
-    h
-  );
-}
-
-/* ================= PLAYER ================= */
-
-const player = {
-  x: 6,
-  y: 6,
-  dir: "s",
-  target: null,
-  speed: 0.05,
-  img: new Image()
+// ---------- AVATAR ----------
+let player = {
+  x: 4,
+  y: 4,
+  dir: "s"
 };
 
-player.img.src = "/images/avatars/robe/s/robe1.png";
+const avatar = document.createElement("img");
+avatar.className = "avatar";
+map.appendChild(avatar);
 
-/* ================= FURNI ================= */
-
-const furni = [
-  { x: 4, y: 6, img: loadFurni("bookshelf.png") },
-  { x: 6, y: 7, img: loadFurni("chest.png") },
-  { x: 7, y: 5, img: loadFurni("table.png") }
-];
-
-function loadFurni(name) {
-  const i = new Image();
-  i.src = `/images/furni/${name}`;
-  return i;
+function updateAvatar() {
+  avatar.src = `images/avatars/robe/${player.dir}/robe1.png`;
+  const pos = isoToScreen(player.x, player.y);
+  avatar.style.left = pos.x - 32 + "px";
+  avatar.style.top = pos.y - 96 + "px";
 }
 
-/* ================= CLICK MOVE ================= */
+updateAvatar();
 
-canvas.addEventListener("click", e => {
-  const rect = canvas.getBoundingClientRect();
-  const iso = screenToIso(
-    e.clientX - rect.left,
-    e.clientY - rect.top
-  );
+// ---------- MOVEMENT ----------
+map.addEventListener("click", e => {
+  const rect = map.getBoundingClientRect();
+  const mx = e.clientX - rect.left - 1000;
+  const my = e.clientY - rect.top - 300;
 
-  if (iso.x < 0 || iso.y < 0 || iso.x >= GRID_W || iso.y >= GRID_H) return;
+  const tx = Math.round((my / (TILE_H / 2) + mx / (TILE_W / 2)) / 2);
+  const ty = Math.round((my / (TILE_H / 2) - mx / (TILE_W / 2)) / 2);
 
-  player.target = { x: iso.x, y: iso.y };
+  const dx = tx - player.x;
+  const dy = ty - player.y;
 
-  const dx = iso.x - player.x;
-  const dy = iso.y - player.y;
-
-  if (Math.abs(dx) > Math.abs(dy))
+  if (Math.abs(dx) > Math.abs(dy)) {
     player.dir = dx > 0 ? "e" : "w";
-  else
+  } else {
     player.dir = dy > 0 ? "s" : "n";
+  }
 
-  player.img.src = `/images/avatars/robe/${player.dir}/robe1.png`;
+  player.x = Math.max(0, Math.min(MAP_W - 1, tx));
+  player.y = Math.max(0, Math.min(MAP_H - 1, ty));
+
+  updateAvatar();
 });
 
-/* ================= UPDATE ================= */
+// ---------- FURNI ----------
+const FURNI_SCALES = {
+  bookshelf: 0.45,
+  table: 0.38,
+  chest: 0.34
+};
 
-function update() {
-  if (player.target) {
-    const dx = player.target.x - player.x;
-    const dy = player.target.y - player.y;
+function addFurni(type, x, y, img) {
+  const f = document.createElement("img");
+  f.className = "furni";
+  f.src = img;
 
-    if (Math.abs(dx) < 0.02 && Math.abs(dy) < 0.02) {
-      player.x = player.target.x;
-      player.y = player.target.y;
-      player.target = null;
-    } else {
-      player.x += Math.sign(dx) * player.speed;
-      player.y += Math.sign(dy) * player.speed;
-    }
-  }
+  const pos = isoToScreen(x, y);
+  f.style.left = pos.x + "px";
+  f.style.top = pos.y + "px";
+  f.style.transform = `scale(${FURNI_SCALES[type]})`;
+
+  map.appendChild(f);
 }
 
-/* ================= DRAW ================= */
-
-function drawGrid() {
-  ctx.strokeStyle = "rgba(255,255,255,0.05)";
-
-  for (let x = 0; x <= GRID_W; x++) {
-    for (let y = 0; y <= GRID_H; y++) {
-      const p = isoToScreen(x, y);
-      ctx.beginPath();
-      ctx.moveTo(p.x, p.y);
-      ctx.lineTo(p.x + TILE_W / 2, p.y + TILE_H / 2);
-      ctx.stroke();
-    }
-  }
-}
-
-function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  drawGrid();
-
-  const drawables = [];
-
-  furni.forEach(f => {
-    drawables.push({
-      z: f.x + f.y,
-      draw: () => drawSprite(f.img, f.x, f.y, SCALE_FURNI, 6)
-    });
-  });
-
-  drawables.push({
-    z: player.x + player.y + 0.5,
-    draw: () => drawSprite(player.img, player.x, player.y, SCALE_PLAYER, 4)
-  });
-
-  drawables.sort((a, b) => a.z - b.z);
-  drawables.forEach(d => d.draw());
-}
-
-/* ================= LOOP ================= */
-
-function loop() {
-  update();
-  draw();
-  requestAnimationFrame(loop);
-}
-
-loop();
+// POSIZIONI DEFINITIVE
+addFurni("bookshelf", 2, 4, "images/furni/bookshelf.png");
+addFurni("table",     4, 3, "images/furni/table.png");
+addFurni("chest",     3, 5, "images/furni/chest.png");
