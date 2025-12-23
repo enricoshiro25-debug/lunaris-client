@@ -1,8 +1,9 @@
-console.log("CASTLE JS 11.2 CARICATO");
+console.log("CASTLE JS 11.3 CARICATO");
 
 const TILE_W = 48;
 const TILE_H = 24;
-const MOVE_SPEED = 0.1; // più basso = più lento
+const MOVE_SPEED = 0.12;
+const ANIM_SPEED = 300; // ms
 
 const player = {
   tileX: 5,
@@ -12,7 +13,9 @@ const player = {
   screenX: 0,
   screenY: 0,
   direction: "s",
-  robe: "robe1"
+  robe: "robe1",
+  moving: false,
+  frame: 0
 };
 
 const playerEl = document.getElementById("player");
@@ -29,10 +32,11 @@ function isoToScreen(x, y) {
 }
 
 // =========================
-// AVATAR
+// AVATAR + FRAME
 // =========================
 function updateAvatar() {
-  sprite.src = `images/avatars/robe/${player.direction}/${player.robe}.png`;
+  const frame = player.moving ? player.frame : 0;
+  sprite.src = `images/avatars/robe/${player.direction}/${player.robe}_${frame}.png`;
 }
 
 // =========================
@@ -46,10 +50,9 @@ function updatePosition() {
 // =========================
 // INIT
 // =========================
-const startPos = isoToScreen(player.tileX, player.tileY);
-player.screenX = startPos.x;
-player.screenY = startPos.y;
-
+const start = isoToScreen(player.tileX, player.tileY);
+player.screenX = start.x;
+player.screenY = start.y;
 updateAvatar();
 updatePosition();
 
@@ -65,6 +68,7 @@ document.addEventListener("click", e => {
 
   player.targetX = tx;
   player.targetY = ty;
+  player.moving = true;
 
   const diffX = tx - player.tileX;
   const diffY = ty - player.tileY;
@@ -79,22 +83,34 @@ document.addEventListener("click", e => {
 });
 
 // =========================
-// MOVIMENTO FLUIDO
+// ANIMAZIONE PASSO
+// =========================
+setInterval(() => {
+  if (player.moving) {
+    player.frame = player.frame === 0 ? 1 : 0;
+    updateAvatar();
+  }
+}, ANIM_SPEED);
+
+// =========================
+// GAME LOOP
 // =========================
 function gameLoop() {
-  const targetPos = isoToScreen(player.targetX, player.targetY);
+  const target = isoToScreen(player.targetX, player.targetY);
 
-  player.screenX += (targetPos.x - player.screenX) * MOVE_SPEED;
-  player.screenY += (targetPos.y - player.screenY) * MOVE_SPEED;
+  const dx = target.x - player.screenX;
+  const dy = target.y - player.screenY;
 
-  if (
-    Math.abs(player.screenX - targetPos.x) < 1 &&
-    Math.abs(player.screenY - targetPos.y) < 1
-  ) {
+  if (Math.abs(dx) < 1 && Math.abs(dy) < 1) {
     player.tileX = player.targetX;
     player.tileY = player.targetY;
-    player.screenX = targetPos.x;
-    player.screenY = targetPos.y;
+    player.screenX = target.x;
+    player.screenY = target.y;
+    player.moving = false;
+    updateAvatar();
+  } else {
+    player.screenX += dx * MOVE_SPEED;
+    player.screenY += dy * MOVE_SPEED;
   }
 
   updatePosition();
