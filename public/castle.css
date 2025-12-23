@@ -1,6 +1,4 @@
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
@@ -46,26 +44,21 @@ body {
   pointer-events: none;
 }
 
+/* LAYER */
 .layer {
   position: absolute;
-  left: 0;
   image-rendering: pixelated;
 }
 
+/* ROBE */
 #robe {
   bottom: 0;
   width: 80px;
 }
 
+/* FACE */
 #face {
   bottom: 60px;
   left: 8px;
   width: 64px;
-}
-
-/* FURNI */
-.furni {
-  position: absolute;
-  image-rendering: pixelated;
-  pointer-events: none;
 }
