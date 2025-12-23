@@ -1,4 +1,4 @@
-console.log("CASTLE JS 11.5 CARICATO");
+console.log("CASTLE JS 11.6 CARICATO");
 
 // =========================
 // CONFIG
@@ -46,41 +46,19 @@ function updateAvatar() {
 }
 
 // =========================
-// POSIZIONE
+// POSIZIONE + Z-INDEX
 // =========================
 function updatePosition() {
   playerEl.style.left = player.screenX + "px";
   playerEl.style.top = player.screenY + "px";
-}
 
-// =========================
-// GRIGLIA DEBUG
-// =========================
-function drawGrid() {
-  for (let y = 0; y < MAP_ROWS; y++) {
-    for (let x = 0; x < MAP_COLS; x++) {
-      const tile = document.createElement("div");
-      const pos = isoToScreen(x, y);
-
-      tile.style.position = "absolute";
-      tile.style.left = pos.x + "px";
-      tile.style.top = pos.y + "px";
-      tile.style.width = TILE_W + "px";
-      tile.style.height = TILE_H + "px";
-      tile.style.transform = "translate(-50%, -50%) rotate(45deg) skewY(-26deg)";
-      tile.style.border = "1px solid rgba(255,255,255,0.15)";
-      tile.style.pointerEvents = "none";
-
-      game.appendChild(tile);
-    }
-  }
+  // ⭐ REGOLA Z-INDEX (CORE)
+  playerEl.style.zIndex = player.tileY * 10;
 }
 
 // =========================
 // INIT
 // =========================
-drawGrid();
-
 const start = isoToScreen(player.tileX, player.tileY);
 player.screenX = start.x;
 player.screenY = start.y;
