@@ -1,7 +1,7 @@
-console.log("CASTLE JS FASE 12 CARICATO");
+console.log("CASTLE JS DEFINITIVO CARICATO");
 
 // =========================
-// CONFIGURAZIONE BASE
+// CONFIG
 // =========================
 const TILE_W = 48;
 const TILE_H = 24;
@@ -28,7 +28,7 @@ const playerEl = document.getElementById("player");
 const sprite = document.getElementById("playerSprite");
 
 // =========================
-// FURNI (I TUOI)
+// FURNI (TUOI)
 // =========================
 const furniList = [
   { id: 1, x: 4, y: 2, img: "bookshelf.png", solid: true },
@@ -37,13 +37,13 @@ const furniList = [
 ];
 
 // =========================
-// MAPPA COLLISIONI
+// COLLISION MAP
 // =========================
 const collisionMap = Array.from({ length: MAP_ROWS }, () =>
   Array(MAP_COLS).fill(0)
 );
 
-// blocca le tile dei furni
+// blocca furni
 furniList.forEach(f => {
   if (f.solid) collisionMap[f.y][f.x] = 1;
 });
@@ -75,22 +75,13 @@ function createFurni() {
 
     el.src = `images/furni/${f.img}`;
     el.style.position = "absolute";
-
-    // posizione base
     el.style.left = pos.x + "px";
     el.style.top = pos.y + "px";
-
-    // 🔑 SCALA FURNI (QUI È LA SOLUZIONE)
-    el.style.width = "64px";      // ← cambia qui se vuoi più grande/piccolo
+    el.style.width = "64px";
     el.style.height = "auto";
-
-    // allineamento isometrico
     el.style.transform = "translate(-50%, -85%)";
-
     el.style.pointerEvents = "none";
     el.style.imageRendering = "pixelated";
-
-    // z-index corretto
     el.style.zIndex = f.y * 10 + 5;
 
     game.appendChild(el);
@@ -121,12 +112,9 @@ function findPath(sx, sy, tx, ty) {
     { x: 0, y: -1 }
   ];
 
-  while (queue.length > 0) {
+  while (queue.length) {
     const cur = queue.shift();
-
-    if (cur.x === tx && cur.y === ty) {
-      return cur.path;
-    }
+    if (cur.x === tx && cur.y === ty) return cur.path;
 
     for (const d of dirs) {
       const nx = cur.x + d.x;
@@ -147,7 +135,6 @@ function findPath(sx, sy, tx, ty) {
       }
     }
   }
-
   return null;
 }
 
@@ -175,7 +162,7 @@ document.addEventListener("click", e => {
 });
 
 // =========================
-// GAME LOOP
+// GAME LOOP (CORE)
 // =========================
 function gameLoop() {
   if (player.path.length > 0) {
@@ -208,12 +195,15 @@ function gameLoop() {
     updateAvatar();
   }
 
-  // CAMERA CENTRATA
+  // POSIZIONE PLAYER (VISIVA)
+  playerEl.style.left = player.screenX + "px";
+  playerEl.style.top  = player.screenY + "px";
+  playerEl.style.zIndex = player.tileY * 10;
+
+  // CAMERA
   game.style.transform =
     `translate(${window.innerWidth / 2 - player.screenX}px,
                ${window.innerHeight / 2 - player.screenY}px)`;
-
-  playerEl.style.zIndex = player.tileY * 10;
 
   requestAnimationFrame(gameLoop);
 }
