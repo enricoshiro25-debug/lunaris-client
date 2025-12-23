@@ -1,16 +1,3 @@
-// ===== LOGIN =====
-const username = localStorage.getItem("username");
-if (!username) window.location.href = "login.html";
-
-// ===== AVATAR DATA =====
-const avatar = {
-  face: 0,
-  robe: 0
-};
-
-const faces = ["face1.png", "face2.png"];
-const robes = ["robe1.png", "robe2.png"];
-
 // ===== MAPPA =====
 const COLS = 16;
 const ROWS = 12;
@@ -45,15 +32,16 @@ function isoPos(x, y) {
   };
 }
 
-// ===== AVATAR =====
+// ===== AVATAR (FISSO, COERENTE CON LE TUE IMMAGINI) =====
 function updateAvatar() {
-  document.getElementById("face").src =
-    `/images/avatars/face/${direction}/${faces[avatar.face]}`;
   document.getElementById("robe").src =
-    `/images/avatars/robe/${direction}/${robes[avatar.robe]}`;
+    `/images/avatars/robe/${direction}/robe1.png`;
+
+  document.getElementById("face").src =
+    `/images/avatars/face/${direction}/face1.png`;
 }
 
-// ===== PLAYER =====
+// ===== PLAYER POS =====
 function updatePlayer() {
   const pos = isoPos(gridX, gridY);
   player.style.left = pos.x + room.clientWidth / 2 - 40 + "px";
@@ -61,7 +49,7 @@ function updatePlayer() {
   player.style.zIndex = gridX + gridY + 10;
 }
 
-// ===== DIRECTION =====
+// ===== DIREZIONE =====
 function updateDirection(nx, ny) {
   if (nx > gridX) direction = "e";
   else if (nx < gridX) direction = "w";
