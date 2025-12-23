@@ -1,0 +1,39 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #05060f;
+  overflow: hidden;
+}
+
+#game {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+}
+
+#map {
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(
+      45deg,
+      rgba(120,120,180,0.25) 0px,
+      rgba(120,120,180,0.25) 24px,
+      transparent 24px,
+      transparent 48px
+    );
+}
+
+#player {
+  position: absolute;
+  width: 80px;
+  height: 100px;
+  pointer-events: none;
+  transform: translate(-40px, -90px);
+}
+
+#player img {
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
