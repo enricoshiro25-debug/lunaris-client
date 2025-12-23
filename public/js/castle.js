@@ -9,8 +9,8 @@ canvas.height = window.innerHeight;
 const TILE_W = 64;
 const TILE_H = 32;
 
-const SCALE_PLAYER = 0.40;
-const SCALE_FURNI  = 0.35;
+const SCALE_PLAYER = 0.41;
+const SCALE_FURNI  = 0.33;
 
 const GRID_W = 12;
 const GRID_H = 12;
