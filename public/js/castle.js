@@ -1,68 +1,88 @@
-const canvas = document.getElementById("game");
+const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
-// resize
-function resize() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-window.addEventListener("resize", resize);
-resize();
+const TILE_W = 64;
+const TILE_H = 32;
+const GRID_W = 10;
+const GRID_H = 10;
 
-// PLAYER
+let player = {
+  x: 5,
+  y: 5,
+  px: 0,
+  py: 0,
+  targetX: 5,
+  targetY: 5,
+  speed: 0.1
+};
+
+// carica sprite player (una sola immagine)
 const playerImg = new Image();
-playerImg.src = "/images/avatars/robe/e.png";
+playerImg.src = "/images/avatars/robe/e/robe.png"; // se non esiste, vedi nota sotto
 
-const player = {
-  x: canvas.width / 2,
-  y: canvas.height / 2,
-  w: 48,
-  h: 72
+playerImg.onerror = () => {
+  console.warn("Sprite non trovato, uso quadrato temporaneo");
 };
 
-// FURNI
-const furniImg = {
-  chest: new Image(),
-  bookshelf: new Image(),
-  table: new Image()
-};
+function isoToScreen(x, y) {
+  return {
+    x: (x - y) * TILE_W / 2 + canvas.width / 2,
+    y: (x + y) * TILE_H / 2 + 100
+  };
+}
 
-furniImg.chest.src = "/images/furni/chest.png";
-furniImg.bookshelf.src = "/images/furni/bookshelf.png";
-furniImg.table.src = "/images/furni/table.png";
-
-const furni = [
-  { type: "chest", x: player.x - 100, y: player.y + 40, w: 64, h: 48 },
-  { type: "bookshelf", x: player.x + 80, y: player.y - 40, w: 64, h: 96 },
-  { type: "table", x: player.x + 20, y: player.y + 100, w: 64, h: 48 }
-];
-
-// CLICK
 canvas.addEventListener("click", (e) => {
-  const r = canvas.getBoundingClientRect();
-  const mx = e.clientX - r.left;
-  const my = e.clientY - r.top;
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left - canvas.width / 2;
+  const my = e.clientY - rect.top - 100;
 
-  furni.forEach(f => {
-    if (mx >= f.x && mx <= f.x + f.w && my >= f.y && my <= f.y + f.h) {
-      alert("Hai cliccato: " + f.type);
-    }
-  });
+  const tx = Math.floor((my / (TILE_H / 2) + mx / (TILE_W / 2)) / 2);
+  const ty = Math.floor((my / (TILE_H / 2) - mx / (TILE_W / 2)) / 2);
+
+  if (tx >= 0 && ty >= 0 && tx < GRID_W && ty < GRID_H) {
+    player.targetX = tx;
+    player.targetY = ty;
+  }
 });
 
-// DRAW
-function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  // furni
-  furni.forEach(f => {
-    ctx.drawImage(furniImg[f.type], f.x, f.y, f.w, f.h);
-  });
-
-  // player
-  ctx.drawImage(playerImg, player.x, player.y, player.w, player.h);
-
-  requestAnimationFrame(draw);
+function update() {
+  player.x += (player.targetX - player.x) * player.speed;
+  player.y += (player.targetY - player.y) * player.speed;
 }
 
-draw();
+function drawGrid() {
+  for (let y = 0; y < GRID_H; y++) {
+    for (let x = 0; x < GRID_W; x++) {
+      const p = isoToScreen(x, y);
+      ctx.strokeStyle = "rgba(255,255,255,0.08)";
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y);
+      ctx.lineTo(p.x + TILE_W / 2, p.y + TILE_H / 2);
+      ctx.lineTo(p.x, p.y + TILE_H);
+      ctx.lineTo(p.x - TILE_W / 2, p.y + TILE_H / 2);
+      ctx.closePath();
+      ctx.stroke();
+    }
+  }
+}
+
+function drawPlayer() {
+  const p = isoToScreen(player.x, player.y);
+
+  if (playerImg.complete && playerImg.naturalWidth > 0) {
+    ctx.drawImage(playerImg, p.x - 32, p.y - 64, 64, 64);
+  } else {
+    ctx.fillStyle = "red";
+    ctx.fillRect(p.x - 10, p.y - 20, 20, 40);
+  }
+}
+
+function loop() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawGrid();
+  drawPlayer();
+  update();
+  requestAnimationFrame(loop);
+}
+
+loop();
