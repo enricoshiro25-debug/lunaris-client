@@ -36,7 +36,7 @@ function isoToScreen(x, y) {
 // =========================
 function updateAvatar() {
   const frame = player.moving ? player.frame : 0;
-  sprite.src = `images/avatars/robe/${player.direction}/${player.robe}_${frame}.png`;
+  sprite.src = `images/avatars/robe/${player.direction}/${player.robe}.png`;
 }
 
 // =========================
