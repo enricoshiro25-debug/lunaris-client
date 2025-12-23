@@ -5,7 +5,7 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 /* =========================
-   MAP
+   TILE & MAP
 ========================= */
 const TILE_W = 64;
 const TILE_H = 32;
@@ -13,42 +13,61 @@ const MAP_W = 10;
 const MAP_H = 10;
 
 const ORIGIN_X = canvas.width / 2;
-const ORIGIN_Y = 200;
+const ORIGIN_Y = 180;
 
 /* =========================
    PLAYER
 ========================= */
 const player = {
+  tx: 4,
+  ty: 4,
   x: 4,
   y: 4,
-  px: 4,
-  py: 4,
   dir: "s",
-  speed: 0.08,
+  speed: 0.12,
   img: new Image()
 };
 
 function loadPlayer() {
-  player.img.src = `images/avatars/robe/${player.dir}/robe1.png`;
+  player.img.src = `/images/avatars/robe/${player.dir}/robe1.png`;
 }
 loadPlayer();
 
 /* =========================
-   FURNI (1 tile each)
+   FURNI (HABBO SCALE)
 ========================= */
 const furni = [
-  { x: 3, y: 4, w: 64, h: 96, src: "images/furni/bookshelf.png" },
-  { x: 5, y: 5, w: 64, h: 64, src: "images/furni/chest.png" },
-  { x: 6, y: 3, w: 64, h: 64, src: "images/furni/table.png" }
+  {
+    x: 3,
+    y: 4,
+    w: 64,
+    h: 128,
+    img: loadImg("/images/furni/bookshelf.png")
+  },
+  {
+    x: 5,
+    y: 5,
+    w: 64,
+    h: 64,
+    img: loadImg("/images/furni/chest.png")
+  },
+  {
+    x: 6,
+    y: 3,
+    w: 64,
+    h: 64,
+    img: loadImg("/images/furni/table.png")
+  }
 ];
 
-furni.forEach(f => {
-  f.img = new Image();
-  f.img.src = f.src;
-});
+function loadImg(src) {
+  const i = new Image();
+  i.src = src;
+  return i;
+}
 
 /* =========================
-   COLLISION MAP
+   COLLISION
 ========================= */
 function isBlocked(x, y) {
   if (x < 0 || y < 0 || x >= MAP_W || y >= MAP_H) return true;
@@ -56,38 +75,39 @@ function isBlocked(x, y) {
 }
 
 /* =========================
-   ISO UTILS
+   ISO CONVERSION (FIXED)
 ========================= */
 function isoToScreen(x, y) {
   return {
-    x: (x - y) * TILE_W / 2 + ORIGIN_X,
-    y: (x + y) * TILE_H / 2 + ORIGIN_Y
+    x: (x - y) * (TILE_W / 2) + ORIGIN_X,
+    y: (x + y) * (TILE_H / 2) + ORIGIN_Y
   };
 }
 
 function screenToIso(mx, my) {
   mx -= ORIGIN_X;
   my -= ORIGIN_Y;
+
   const x = Math.floor((mx / (TILE_W / 2) + my / (TILE_H / 2)) / 2);
   const y = Math.floor((my / (TILE_H / 2) - mx / (TILE_W / 2)) / 2);
+
   return { x, y };
 }
 
 /* =========================
-   CLICK MOVE
+   CLICK MOVE (PRECISE)
 ========================= */
 canvas.addEventListener("click", e => {
   const t = screenToIso(e.offsetX, e.offsetY);
-
   if (isBlocked(t.x, t.y)) return;
 
-  if (t.x > player.x) player.dir = "e";
-  else if (t.x < player.x) player.dir = "w";
-  else if (t.y > player.y) player.dir = "s";
-  else if (t.y < player.y) player.dir = "n";
+  if (t.x > player.tx) player.dir = "e";
+  else if (t.x < player.tx) player.dir = "w";
+  else if (t.y > player.ty) player.dir = "s";
+  else if (t.y < player.ty) player.dir = "n";
 
-  player.x = t.x;
-  player.y = t.y;
+  player.tx = t.x;
+  player.ty = t.y;
   loadPlayer();
 });
 
@@ -95,12 +115,12 @@ canvas.addEventListener("click", e => {
    UPDATE
 ========================= */
 function updatePlayer() {
-  player.px += (player.x - player.px) * player.speed;
-  player.py += (player.y - player.py) * player.speed;
+  player.x += (player.tx - player.x) * player.speed;
+  player.y += (player.ty - player.y) * player.speed;
 }
 
 /* =========================
-   DRAW GRID
+   DRAW GRID (DEBUG)
 ========================= */
 function drawGrid() {
   ctx.strokeStyle = "rgba(255,255,255,0.04)";
@@ -119,28 +139,41 @@ function drawGrid() {
 }
 
 /* =========================
-   DRAW SORTED
+   DEPTH SORT
 ========================= */
 function drawScene() {
-  const objects = [];
+  const list = [];
 
   furni.forEach(f => {
     const p = isoToScreen(f.x, f.y);
-    objects.push({
-      y: f.y,
-      draw: () => ctx.drawImage(f.img, p.x - f.w / 2, p.y - f.h, f.w, f.h)
+    list.push({
+      z: f.y,
+      draw: () =>
+        ctx.drawImage(
+          f.img,
+          p.x - f.w / 2,
+          p.y - f.h,
+          f.w,
+          f.h
+        )
     });
   });
 
-  const pp = isoToScreen(player.px, player.py);
-  objects.push({
-    y: player.py,
+  const pp = isoToScreen(player.x, player.y);
+  list.push({
+    z: player.y,
     draw: () =>
-      ctx.drawImage(player.img, pp.x - 32, pp.y - 96, 64, 96)
+      ctx.drawImage(
+        player.img,
+        pp.x - 32,
+        pp.y - 96,
+        64,
+        96
+      )
   });
 
-  objects.sort((a, b) => a.y - b.y);
-  objects.forEach(o => o.draw());
+  list.sort((a, b) => a.z - b.z);
+  list.forEach(o => o.draw());
 }
 
 /* =========================
