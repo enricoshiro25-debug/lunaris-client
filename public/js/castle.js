@@ -1,78 +1,76 @@
-const canvas = document.getElementById("gameCanvas");
+const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
 const TILE_W = 64;
 const TILE_H = 32;
-const GRID_W = 10;
-const GRID_H = 10;
+const MAP_W = 10;
+const MAP_H = 10;
 
-/* ================= PLAYER ================= */
+const offsetX = canvas.width / 2;
+const offsetY = 150;
 
-const playerImg = new Image();
-playerImg.src = "../images/avatars/robe/e/robe.png"; // ← FIX DEFINITIVO
-
+// PLAYER
 const player = {
   x: 4,
   y: 4,
-  tx: 4,
-  ty: 4,
-  speed: 0.15
+  dir: "s",
+  img: new Image()
 };
 
-/* ================= FURNI ================= */
+function loadPlayer() {
+  player.img.src = `images/avatars/robe/${player.dir}/robe1.png`;
+}
+loadPlayer();
 
+// FURNI
 const furni = [
-  { x: 6, y: 4, img: "../images/furni/bookshelf.png" },
-  { x: 5, y: 5, img: "../images/furni/chest.png" },
-  { x: 6, y: 5, img: "../images/furni/table.png" }
+  { x: 6, y: 5, img: "images/furni/chest.png" },
+  { x: 3, y: 6, img: "images/furni/bookshelf.png" },
+  { x: 5, y: 3, img: "images/furni/table.png" }
 ];
 
-const furniImgs = {};
 furni.forEach(f => {
-  const img = new Image();
-  img.src = f.img;
-  furniImgs[f.img] = img;
+  f.image = new Image();
+  f.image.src = f.img;
 });
 
-/* ================= ISO ================= */
-
+// ISO CONVERSION
 function iso(x, y) {
   return {
-    x: (x - y) * TILE_W / 2 + canvas.width / 2,
-    y: (x + y) * TILE_H / 2 + 120
+    x: (x - y) * TILE_W / 2 + offsetX,
+    y: (x + y) * TILE_H / 2 + offsetY
   };
 }
 
-/* ================= INPUT ================= */
-
+// CLICK MOVEMENT
 canvas.addEventListener("click", e => {
-  const r = canvas.getBoundingClientRect();
-  const mx = e.clientX - r.left - canvas.width / 2;
-  const my = e.clientY - r.top - 120;
+  const mx = e.offsetX - offsetX;
+  const my = e.offsetY - offsetY;
 
-  const tx = Math.floor((my / (TILE_H / 2) + mx / (TILE_W / 2)) / 2);
-  const ty = Math.floor((my / (TILE_H / 2) - mx / (TILE_W / 2)) / 2);
+  const ty = Math.floor((my / TILE_H + mx / TILE_W));
+  const tx = Math.floor((my / TILE_H - mx / TILE_W));
 
-  if (tx >= 0 && ty >= 0 && tx < GRID_W && ty < GRID_H) {
-    player.tx = tx;
-    player.ty = ty;
+  if (tx >= 0 && ty >= 0 && tx < MAP_W && ty < MAP_H) {
+    if (tx > player.x) player.dir = "e";
+    if (tx < player.x) player.dir = "w";
+    if (ty > player.y) player.dir = "s";
+    if (ty < player.y) player.dir = "n";
+
+    player.x = tx;
+    player.y = ty;
+    loadPlayer();
   }
 });
 
-/* ================= UPDATE ================= */
-
-function update() {
-  player.x += (player.tx - player.x) * player.speed;
-  player.y += (player.ty - player.y) * player.speed;
-}
-
-/* ================= DRAW ================= */
-
+// DRAW
 function drawGrid() {
-  ctx.strokeStyle = "rgba(255,255,255,0.1)";
-  for (let y = 0; y < GRID_H; y++) {
-    for (let x = 0; x < GRID_W; x++) {
+  for (let y = 0; y < MAP_H; y++) {
+    for (let x = 0; x < MAP_W; x++) {
       const p = iso(x, y);
+      ctx.strokeStyle = "rgba(255,255,255,0.05)";
       ctx.beginPath();
       ctx.moveTo(p.x, p.y);
       ctx.lineTo(p.x + TILE_W / 2, p.y + TILE_H / 2);
@@ -87,28 +85,20 @@ function drawGrid() {
 function drawFurni() {
   furni.forEach(f => {
     const p = iso(f.x, f.y);
-    const img = furniImgs[f.img];
-    if (img.complete) {
-      ctx.drawImage(img, p.x - img.width / 2, p.y - img.height + 16);
-    }
+    ctx.drawImage(f.image, p.x - 32, p.y - 64, 64, 64);
   });
 }
 
 function drawPlayer() {
   const p = iso(player.x, player.y);
-  if (playerImg.complete && playerImg.naturalWidth > 0) {
-    ctx.drawImage(playerImg, p.x - 32, p.y - 64, 64, 64);
-  }
+  ctx.drawImage(player.img, p.x - 32, p.y - 64, 64, 96);
 }
-
-/* ================= LOOP ================= */
 
 function loop() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawGrid();
   drawFurni();
   drawPlayer();
-  update();
   requestAnimationFrame(loop);
 }
 
