@@ -4,19 +4,23 @@ const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+/* --- MAP --- */
 const TILE_W = 64;
 const TILE_H = 32;
 const MAP_W = 10;
 const MAP_H = 10;
 
-const offsetX = canvas.width / 2;
-const offsetY = 150;
+const ORIGIN_X = canvas.width / 2;
+const ORIGIN_Y = 180;
 
-// PLAYER
+/* --- PLAYER --- */
 const player = {
   x: 4,
   y: 4,
+  px: 4,
+  py: 4,
   dir: "s",
+  speed: 0.08,
   img: new Image()
 };
 
@@ -25,52 +29,62 @@ function loadPlayer() {
 }
 loadPlayer();
 
-// FURNI
+/* --- FURNI --- */
 const furni = [
-  { x: 6, y: 5, img: "images/furni/chest.png" },
-  { x: 3, y: 6, img: "images/furni/bookshelf.png" },
-  { x: 5, y: 3, img: "images/furni/table.png" }
+  { x: 3, y: 4, w: 64, h: 96, src: "images/furni/bookshelf.png" },
+  { x: 5, y: 5, w: 64, h: 64, src: "images/furni/chest.png" },
+  { x: 6, y: 3, w: 64, h: 64, src: "images/furni/table.png" }
 ];
 
 furni.forEach(f => {
-  f.image = new Image();
-  f.image.src = f.img;
+  f.img = new Image();
+  f.img.src = f.src;
 });
 
-// ISO CONVERSION
-function iso(x, y) {
+/* --- ISO UTILS --- */
+function isoToScreen(x, y) {
   return {
-    x: (x - y) * TILE_W / 2 + offsetX,
-    y: (x + y) * TILE_H / 2 + offsetY
+    x: (x - y) * TILE_W / 2 + ORIGIN_X,
+    y: (x + y) * TILE_H / 2 + ORIGIN_Y
   };
 }
 
-// CLICK MOVEMENT
+function screenToIso(mx, my) {
+  mx -= ORIGIN_X;
+  my -= ORIGIN_Y;
+  const x = Math.floor((mx / (TILE_W / 2) + my / (TILE_H / 2)) / 2);
+  const y = Math.floor((my / (TILE_H / 2) - mx / (TILE_W / 2)) / 2);
+  return { x, y };
+}
+
+/* --- CLICK --- */
 canvas.addEventListener("click", e => {
-  const mx = e.offsetX - offsetX;
-  const my = e.offsetY - offsetY;
+  const t = screenToIso(e.offsetX, e.offsetY);
 
-  const ty = Math.floor((my / TILE_H + mx / TILE_W));
-  const tx = Math.floor((my / TILE_H - mx / TILE_W));
+  if (t.x < 0 || t.y < 0 || t.x >= MAP_W || t.y >= MAP_H) return;
 
-  if (tx >= 0 && ty >= 0 && tx < MAP_W && ty < MAP_H) {
-    if (tx > player.x) player.dir = "e";
-    if (tx < player.x) player.dir = "w";
-    if (ty > player.y) player.dir = "s";
-    if (ty < player.y) player.dir = "n";
+  if (t.x > player.x) player.dir = "e";
+  else if (t.x < player.x) player.dir = "w";
+  else if (t.y > player.y) player.dir = "s";
+  else if (t.y < player.y) player.dir = "n";
 
-    player.x = tx;
-    player.y = ty;
-    loadPlayer();
-  }
+  player.x = t.x;
+  player.y = t.y;
+  loadPlayer();
 });
 
-// DRAW
+/* --- UPDATE PLAYER (SMOOTH MOVE) --- */
+function updatePlayer() {
+  player.px += (player.x - player.px) * player.speed;
+  player.py += (player.y - player.py) * player.speed;
+}
+
+/* --- DRAW GRID --- */
 function drawGrid() {
+  ctx.strokeStyle = "rgba(255,255,255,0.04)";
   for (let y = 0; y < MAP_H; y++) {
     for (let x = 0; x < MAP_W; x++) {
-      const p = iso(x, y);
-      ctx.strokeStyle = "rgba(255,255,255,0.05)";
+      const p = isoToScreen(x, y);
       ctx.beginPath();
       ctx.moveTo(p.x, p.y);
       ctx.lineTo(p.x + TILE_W / 2, p.y + TILE_H / 2);
@@ -82,23 +96,40 @@ function drawGrid() {
   }
 }
 
-function drawFurni() {
+/* --- SORT BY DEPTH --- */
+function getDepth(o) {
+  return o.y + (o.py ?? 0);
+}
+
+/* --- DRAW --- */
+function drawScene() {
+  const objects = [];
+
   furni.forEach(f => {
-    const p = iso(f.x, f.y);
-    ctx.drawImage(f.image, p.x - 32, p.y - 64, 64, 64);
+    const p = isoToScreen(f.x, f.y);
+    objects.push({
+      y: f.y,
+      draw: () => ctx.drawImage(f.img, p.x - f.w / 2, p.y - f.h, f.w, f.h)
+    });
   });
+
+  const pp = isoToScreen(player.px, player.py);
+  objects.push({
+    y: player.py,
+    draw: () =>
+      ctx.drawImage(player.img, pp.x - 32, pp.y - 96, 64, 96)
+  });
+
+  objects.sort((a, b) => a.y - b.y);
+  objects.forEach(o => o.draw());
 }
 
-function drawPlayer() {
-  const p = iso(player.x, player.y);
-  ctx.drawImage(player.img, p.x - 32, p.y - 64, 64, 96);
-}
-
+/* --- LOOP --- */
 function loop() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  updatePlayer();
   drawGrid();
-  drawFurni();
-  drawPlayer();
+  drawScene();
   requestAnimationFrame(loop);
 }
 
