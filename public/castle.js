@@ -5,12 +5,13 @@ const player = {
   tileX: 5,
   tileY: 5,
   direction: "s",
-  avatar: "robe1"
+  robe: "robe1"
 };
 
 const playerEl = document.getElementById("player");
 const sprite = document.getElementById("playerSprite");
 
+// ISO → SCHERMO
 function isoToScreen(x, y) {
   return {
     x: (x - y) * (TILE_W / 2) + window.innerWidth / 2,
@@ -18,19 +19,24 @@ function isoToScreen(x, y) {
   };
 }
 
+// === AVATAR (ADATTATO ALLE TUE CARTELLE) ===
 function updateAvatar() {
-  sprite.src = `/images/avatars/male/${player.avatar}/${player.direction}.png`;
+  sprite.src =
+    `/images/avatars/robe/${player.direction}/${player.robe}.png`;
 }
 
+// POSIZIONE
 function updatePosition() {
   const pos = isoToScreen(player.tileX, player.tileY);
   playerEl.style.left = pos.x + "px";
   playerEl.style.top = pos.y + "px";
 }
 
+// INIT
 updateAvatar();
 updatePosition();
 
+// CLICK MOVIMENTO
 document.addEventListener("click", e => {
   const dx = e.clientX - window.innerWidth / 2;
   const dy = e.clientY - 150;
