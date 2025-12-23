@@ -1,4 +1,4 @@
-console.log("CASTLE JS 11.8 CARICATO");
+console.log("CASTLE JS 11.9 CARICATO");
 
 // =========================
 // CONFIG
@@ -12,8 +12,6 @@ const MAP_ROWS = 10;
 
 // =========================
 // MAPPA COLLISIONI
-// 0 = libero
-// 1 = bloccato
 // =========================
 const collisionMap = [
   [1,1,1,1,1,1,1,1,1,1],
@@ -41,6 +39,7 @@ const player = {
   path: []
 };
 
+const game = document.getElementById("game");
 const playerEl = document.getElementById("player");
 const sprite = document.getElementById("playerSprite");
 
@@ -49,8 +48,8 @@ const sprite = document.getElementById("playerSprite");
 // =========================
 function isoToScreen(x, y) {
   return {
-    x: (x - y) * (TILE_W / 2) + window.innerWidth / 2,
-    y: (x + y) * (TILE_H / 2) + 150
+    x: (x - y) * (TILE_W / 2),
+    y: (x + y) * (TILE_H / 2)
   };
 }
 
@@ -62,22 +61,9 @@ function updateAvatar() {
 }
 
 // =========================
-// POSIZIONE + Z
-// =========================
-function updatePosition() {
-  playerEl.style.left = player.screenX + "px";
-  playerEl.style.top = player.screenY + "px";
-  playerEl.style.zIndex = player.tileY * 10;
-}
-
-// =========================
 // INIT
 // =========================
-const start = isoToScreen(player.tileX, player.tileY);
-player.screenX = start.x;
-player.screenY = start.y;
 updateAvatar();
-updatePosition();
 
 // =========================
 // PATHFINDING (BFS)
@@ -87,7 +73,6 @@ function findPath(sx, sy, tx, ty) {
   const visited = Array.from({ length: MAP_ROWS }, () =>
     Array(MAP_COLS).fill(false)
   );
-
   visited[sy][sx] = true;
 
   const dirs = [
@@ -99,10 +84,7 @@ function findPath(sx, sy, tx, ty) {
 
   while (queue.length) {
     const cur = queue.shift();
-
-    if (cur.x === tx && cur.y === ty) {
-      return cur.path;
-    }
+    if (cur.x === tx && cur.y === ty) return cur.path;
 
     for (const d of dirs) {
       const nx = cur.x + d.x;
@@ -123,16 +105,18 @@ function findPath(sx, sy, tx, ty) {
       }
     }
   }
-
   return null;
 }
 
 // =========================
-// CLICK → PATH
+// CLICK
 // =========================
 document.addEventListener("click", e => {
-  const dx = e.clientX - window.innerWidth / 2;
-  const dy = e.clientY - 150;
+  const centerX = window.innerWidth / 2;
+  const centerY = window.innerHeight / 2;
+
+  const dx = e.clientX - centerX;
+  const dy = e.clientY - centerY;
 
   const tx = Math.round((dy / (TILE_H / 2) + dx / (TILE_W / 2)) / 2);
   const ty = Math.round((dy / (TILE_H / 2) - dx / (TILE_W / 2)) / 2);
@@ -148,7 +132,7 @@ document.addEventListener("click", e => {
 });
 
 // =========================
-// GAME LOOP
+// GAME LOOP + CAMERA
 // =========================
 function gameLoop() {
   if (player.path.length > 0) {
@@ -181,7 +165,11 @@ function gameLoop() {
     updateAvatar();
   }
 
-  updatePosition();
+  // CAMERA: il mondo segue il player
+  game.style.transform =
+    `translate(${window.innerWidth / 2 - player.screenX}px,
+               ${window.innerHeight / 2 - player.screenY}px)`;
+
   requestAnimationFrame(gameLoop);
 }
 
