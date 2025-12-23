@@ -1,3 +1,4 @@
+console.log("CASTLE JS CARICATO");
 const TILE_W = 48;
 const TILE_H = 24;
 
