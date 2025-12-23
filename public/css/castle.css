@@ -3,12 +3,16 @@ html, body {
   padding: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(#1b1e3a, #0b0d1a);
+  background: radial-gradient(#14162b, #05060f);
   overflow: hidden;
+}
+
+#game {
+  width: 100%;
+  height: 100%;
 }
 
 canvas {
   display: block;
-  margin: auto;
-  image-rendering: pixelated;
 }
+
