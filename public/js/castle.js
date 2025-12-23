@@ -70,8 +70,38 @@ furni("/images/furni/table.png",     4, 2, 140, 110, 18);
 furni("/images/furni/chest.png",     3, 3, 120, 80,  12);
 
 /* ===== CLICK MOVE (TEST) ===== */
-map.addEventListener("click", () => {
-  player.x++;
-  player.y++;
+function screenToIso(mx, my) {
+  const dx = mx - ORIGIN_X;
+  const dy = my - ORIGIN_Y;
+
+  const isoX = (dx / (TILE_W / 2) + dy / (TILE_H / 2)) / 2;
+  const isoY = (dy / (TILE_H / 2) - dx / (TILE_W / 2)) / 2;
+
+  return {
+    x: Math.round(isoX),
+    y: Math.round(isoY)
+  };
+}
+
+map.addEventListener("click", (e) => {
+  const pos = screenToIso(e.clientX, e.clientY);
+
+  // limiti stanza (evita sparizioni)
+  if (pos.x < 0 || pos.y < 0 || pos.x > 6 || pos.y > 6) return;
+
+  player.x = pos.x;
+  player.y = pos.y;
+
+  // direzione
+  const dx = pos.x - player.x;
+  const dy = pos.y - player.y;
+
+  if (Math.abs(dx) > Math.abs(dy)) {
+    player.dir = dx > 0 ? "e" : "w";
+  } else {
+    player.dir = dy > 0 ? "s" : "n";
+  }
+
+  updateAvatar();
   drawPlayer();
 });
