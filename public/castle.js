@@ -1,83 +1,55 @@
-// ===== MAPPA =====
-const COLS = 16;
-const ROWS = 12;
-const ISO_W = 64;
-const ISO_H = 32;
+const TILE_W = 48;
+const TILE_H = 24;
 
-const room = document.getElementById("room");
-const floor = document.getElementById("floor");
-const player = document.getElementById("player");
+const player = {
+  tileX: 5,
+  tileY: 5,
+  direction: "s",
+  avatar: "robe1"
+};
 
-let gridX = 7;
-let gridY = 6;
-let direction = "s"; // s n e w
+const playerEl = document.getElementById("player");
+const sprite = document.getElementById("playerSprite");
 
-// ===== FLOOR =====
-for (let y = 0; y < ROWS; y++) {
-  for (let x = 0; x < COLS; x++) {
-    const tile = document.createElement("div");
-    tile.className = "tile";
-    tile.style.left = (x - y) * (ISO_W / 2) + "px";
-    tile.style.top = (x + y) * (ISO_H / 2) + "px";
-    tile.style.zIndex = x + y;
-    floor.appendChild(tile);
-  }
-}
-
-// ===== ISO =====
-function isoPos(x, y) {
+function isoToScreen(x, y) {
   return {
-    x: (x - y) * (ISO_W / 2),
-    y: (x + y) * (ISO_H / 2)
+    x: (x - y) * (TILE_W / 2) + window.innerWidth / 2,
+    y: (x + y) * (TILE_H / 2) + 150
   };
 }
 
-// ===== AVATAR (FISSO, COERENTE CON LE TUE IMMAGINI) =====
 function updateAvatar() {
-  document.getElementById("robe").src =
-    `/images/avatars/robe/${direction}/robe1.png`;
-
-  document.getElementById("face").src =
-    `/images/avatars/face/${direction}/face1.png`;
+  sprite.src = `/images/avatars/male/${player.avatar}/${player.direction}.png`;
 }
 
-// ===== PLAYER POS =====
-function updatePlayer() {
-  const pos = isoPos(gridX, gridY);
-  player.style.left = pos.x + room.clientWidth / 2 - 40 + "px";
-  player.style.top = pos.y + 80 - 120 + "px";
-  player.style.zIndex = gridX + gridY + 10;
+function updatePosition() {
+  const pos = isoToScreen(player.tileX, player.tileY);
+  playerEl.style.left = pos.x + "px";
+  playerEl.style.top = pos.y + "px";
 }
 
-// ===== DIREZIONE =====
-function updateDirection(nx, ny) {
-  if (nx > gridX) direction = "e";
-  else if (nx < gridX) direction = "w";
-  else if (ny > gridY) direction = "s";
-  else if (ny < gridY) direction = "n";
-}
-
-// ===== CLICK =====
-floor.addEventListener("click", e => {
-  const r = floor.getBoundingClientRect();
-  const mx = e.clientX - r.left;
-  const my = e.clientY - r.top;
-
-  const isoX = mx / (ISO_W / 2);
-  const isoY = my / (ISO_H / 2);
-
-  const x = Math.floor((isoY + isoX) / 2);
-  const y = Math.floor((isoY - isoX) / 2);
-
-  if (x >= 0 && x < COLS && y >= 0 && y < ROWS) {
-    updateDirection(x, y);
-    gridX = x;
-    gridY = y;
-    updateAvatar();
-    updatePlayer();
-  }
-});
-
-// ===== INIT =====
 updateAvatar();
-updatePlayer();
+updatePosition();
+
+document.addEventListener("click", e => {
+  const dx = e.clientX - window.innerWidth / 2;
+  const dy = e.clientY - 150;
+
+  const tileX = Math.round((dy / (TILE_H / 2) + dx / (TILE_W / 2)) / 2);
+  const tileY = Math.round((dy / (TILE_H / 2) - dx / (TILE_W / 2)) / 2);
+
+  const diffX = tileX - player.tileX;
+  const diffY = tileY - player.tileY;
+
+  if (Math.abs(diffX) > Math.abs(diffY)) {
+    player.direction = diffX > 0 ? "e" : "w";
+  } else {
+    player.direction = diffY > 0 ? "s" : "n";
+  }
+
+  player.tileX = tileX;
+  player.tileY = tileY;
+
+  updateAvatar();
+  updatePosition();
+});
