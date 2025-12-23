@@ -1,64 +1,25 @@
-* { box-sizing: border-box; }
-
-body {
-  margin: 0;
-  background: #0b0b15;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  overflow: hidden;
-}
-
-#room {
-  position: relative;
-  width: 900px;
-  height: 550px;
-  background: radial-gradient(circle, #1a1a2e, #0b0b15);
-  overflow: hidden;
-}
-
-/* FLOOR */
-#floor {
-  position: absolute;
-  left: 50%;
-  top: 80px;
-  transform: translateX(-50%);
-}
-
-/* TILE */
-.tile {
-  position: absolute;
-  width: 64px;
-  height: 32px;
-  background: #2b2b45;
-  border: 1px solid #3b3b5e;
-  transform: skewY(-26deg) scaleY(0.5) rotate(45deg);
-}
-
-/* PLAYER */
 #player {
   position: absolute;
   width: 80px;
-  height: 140px;
+  height: 120px;
   pointer-events: none;
 }
 
-/* LAYER */
 .layer {
   position: absolute;
   image-rendering: pixelated;
 }
 
-/* ROBE */
+/* CORPO */
 #robe {
   bottom: 0;
+  left: 0;
   width: 80px;
 }
 
-/* FACE */
+/* TESTA */
 #face {
-  bottom: 60px;
+  bottom: 64px;
   left: 8px;
   width: 64px;
 }
