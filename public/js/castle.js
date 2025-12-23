@@ -6,9 +6,10 @@ const TILE_H = 32;
 const GRID_W = 10;
 const GRID_H = 10;
 
-// PLAYER
+/* ================= PLAYER ================= */
+
 const playerImg = new Image();
-playerImg.src = "images/avatars/robe/e/robe.png"; // PERCORSO RELATIVO
+playerImg.src = "../images/avatars/robe/e/robe.png"; // ← FIX DEFINITIVO
 
 const player = {
   x: 4,
@@ -18,31 +19,36 @@ const player = {
   speed: 0.15
 };
 
-// FURNI
+/* ================= FURNI ================= */
+
 const furni = [
-  { x: 6, y: 4, img: "images/furni/bookshelf.png" },
-  { x: 5, y: 5, img: "images/furni/chest.png" },
-  { x: 6, y: 5, img: "images/furni/table.png" }
+  { x: 6, y: 4, img: "../images/furni/bookshelf.png" },
+  { x: 5, y: 5, img: "../images/furni/chest.png" },
+  { x: 6, y: 5, img: "../images/furni/table.png" }
 ];
 
 const furniImgs = {};
 furni.forEach(f => {
-  const i = new Image();
-  i.src = f.img;
-  furniImgs[f.img] = i;
+  const img = new Image();
+  img.src = f.img;
+  furniImgs[f.img] = img;
 });
+
+/* ================= ISO ================= */
 
 function iso(x, y) {
   return {
     x: (x - y) * TILE_W / 2 + canvas.width / 2,
-    y: (x + y) * TILE_H / 2 + 100
+    y: (x + y) * TILE_H / 2 + 120
   };
 }
+
+/* ================= INPUT ================= */
 
 canvas.addEventListener("click", e => {
   const r = canvas.getBoundingClientRect();
   const mx = e.clientX - r.left - canvas.width / 2;
-  const my = e.clientY - r.top - 100;
+  const my = e.clientY - r.top - 120;
 
   const tx = Math.floor((my / (TILE_H / 2) + mx / (TILE_W / 2)) / 2);
   const ty = Math.floor((my / (TILE_H / 2) - mx / (TILE_W / 2)) / 2);
@@ -53,13 +59,17 @@ canvas.addEventListener("click", e => {
   }
 });
 
+/* ================= UPDATE ================= */
+
 function update() {
   player.x += (player.tx - player.x) * player.speed;
   player.y += (player.ty - player.y) * player.speed;
 }
 
+/* ================= DRAW ================= */
+
 function drawGrid() {
-  ctx.strokeStyle = "rgba(255,255,255,0.08)";
+  ctx.strokeStyle = "rgba(255,255,255,0.1)";
   for (let y = 0; y < GRID_H; y++) {
     for (let x = 0; x < GRID_W; x++) {
       const p = iso(x, y);
@@ -86,10 +96,12 @@ function drawFurni() {
 
 function drawPlayer() {
   const p = iso(player.x, player.y);
-  if (playerImg.complete) {
+  if (playerImg.complete && playerImg.naturalWidth > 0) {
     ctx.drawImage(playerImg, p.x - 32, p.y - 64, 64, 64);
   }
 }
+
+/* ================= LOOP ================= */
 
 function loop() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
