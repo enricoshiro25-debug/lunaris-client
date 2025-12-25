@@ -1,143 +1,79 @@
-const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
+const map = document.getElementById("map");
+const player = document.getElementById("player");
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+const TILE_W = 40;
+const TILE_H = 20;
 
-// ------------------ CONFIG ------------------
-const TILE_W = 64;
-const TILE_H = 32;
-const GRID_W = 12;
-const GRID_H = 12;
+let playerTile = { x: 4, y: 4 };
+let targetTile = null;
+let direction = "s";
 
-let cameraX = canvas.width / 2;
-let cameraY = 200;
-
-// ------------------ PLAYER ------------------
-const player = {
-  x: 6,
-  y: 6,
-  px: 6,
-  py: 6,
-  dir: "s",
-  frame: 0,
-  moving: false
-};
-
-// ------------------ LOAD IMAGES ------------------
-const playerImgs = {};
-["n","s","e","w"].forEach(d => {
-  playerImgs[d] = [
-    new Image(),
-    new Image()
-  ];
-  playerImgs[d][0].src = `/images/avatars/robe/${d}/robe1_0.png`;
-  playerImgs[d][1].src = `/images/avatars/robe/${d}/robe1_1.png`;
-});
-
-const furni = [
-  { img: loadImg("/images/furni/bookshelf.png"), x: 4, y: 4, scale: 0.8 },
-  { img: loadImg("/images/furni/chest.png"), x: 6, y: 5, scale: 0.8 },
-  { img: loadImg("/images/furni/table.png"), x: 7, y: 4, scale: 0.8 }
-];
-
-function loadImg(src){
-  const i = new Image();
-  i.src = src;
-  return i;
-}
-
-// ------------------ ISO ------------------
-function iso(x, y){
+function isoToScreen(x, y) {
   return {
-    x: (x - y) * TILE_W / 2 + cameraX,
-    y: (x + y) * TILE_H / 2 + cameraY
+    x: (x - y) * (TILE_W / 2),
+    y: (x + y) * (TILE_H / 2)
   };
 }
 
-// ------------------ CLICK ------------------
-canvas.addEventListener("click", e => {
-  const rect = canvas.getBoundingClientRect();
-  const mx = e.clientX - rect.left - cameraX;
-  const my = e.clientY - rect.top - cameraY;
+function screenToIso(x, y) {
+  return {
+    x: Math.round((x / (TILE_W / 2) + y / (TILE_H / 2)) / 2),
+    y: Math.round((y / (TILE_H / 2) - x / (TILE_W / 2)) / 2)
+  };
+}
 
-  const tx = Math.floor((my / (TILE_H/2) + mx / (TILE_W/2)) / 2);
-  const ty = Math.floor((my / (TILE_H/2) - mx / (TILE_W/2)) / 2);
+function updatePlayer() {
+  const pos = isoToScreen(playerTile.x, playerTile.y);
+  player.style.left = pos.x + map.offsetWidth / 2 + "px";
+  player.style.top  = pos.y + map.offsetHeight / 2 + "px";
+}
 
-  if(tx >= 0 && ty >= 0 && tx < GRID_W && ty < GRID_H){
-    player.px = tx;
-    player.py = ty;
+function setDirection(from, to) {
+  if (to.x > from.x) direction = "e";
+  else if (to.x < from.x) direction = "w";
+  else if (to.y > from.y) direction = "s";
+  else direction = "n";
 
-    if(tx > player.x) player.dir = "e";
-    else if(tx < player.x) player.dir = "w";
-    else if(ty > player.y) player.dir = "s";
-    else if(ty < player.y) player.dir = "n";
+  player.src = `/images/avatars/robe/${direction}/robe1.png`;
+}
 
-    player.moving = true;
-  }
+map.addEventListener("click", e => {
+  const rect = map.getBoundingClientRect();
+  const mx = e.clientX - rect.left - map.offsetWidth / 2;
+  const my = e.clientY - rect.top - map.offsetHeight / 2;
+
+  targetTile = screenToIso(mx, my);
+  setDirection(playerTile, targetTile);
 });
 
-// ------------------ UPDATE ------------------
-function update(){
-  if(player.moving){
-    if(player.x < player.px) player.x += 0.08;
-    if(player.x > player.px) player.x -= 0.08;
-    if(player.y < player.py) player.y += 0.08;
-    if(player.y > player.py) player.y -= 0.08;
+function step() {
+  if (!targetTile) return;
 
-    player.frame += 0.15;
-
-    if(Math.abs(player.x - player.px) < 0.05 &&
-       Math.abs(player.y - player.py) < 0.05){
-      player.x = player.px;
-      player.y = player.py;
-      player.moving = false;
-      player.frame = 0;
-    }
+  if (playerTile.x === targetTile.x && playerTile.y === targetTile.y) {
+    targetTile = null;
+    return;
   }
+
+  if (playerTile.x < targetTile.x) playerTile.x++;
+  else if (playerTile.x > targetTile.x) playerTile.x--;
+  else if (playerTile.y < targetTile.y) playerTile.y++;
+  else if (playerTile.y > targetTile.y) playerTile.y--;
+
+  updatePlayer();
 }
 
-// ------------------ DRAW ------------------
-function drawGrid(){
-  ctx.strokeStyle = "rgba(255,255,255,0.05)";
-  for(let x=0;x<GRID_W;x++){
-    for(let y=0;y<GRID_H;y++){
-      const p = iso(x,y);
-      ctx.beginPath();
-      ctx.moveTo(p.x, p.y);
-      ctx.lineTo(p.x + TILE_W/2, p.y + TILE_H/2);
-      ctx.lineTo(p.x, p.y + TILE_H);
-      ctx.lineTo(p.x - TILE_W/2, p.y + TILE_H/2);
-      ctx.closePath();
-      ctx.stroke();
-    }
-  }
+setInterval(step, 150);
+
+/* POSIZIONE FURNI */
+function placeFurni(id, x, y) {
+  const el = document.getElementById(id);
+  const p = isoToScreen(x, y);
+  el.style.left = p.x + map.offsetWidth / 2 + "px";
+  el.style.top  = p.y + map.offsetHeight / 2 + "px";
 }
 
-function draw(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
+placeFurni("bookshelf", 3, 2);
+placeFurni("chest", 4, 3);
+placeFurni("table", 5, 2);
 
-  drawGrid();
-
-  // furni
-  furni.forEach(f => {
-    const p = iso(f.x, f.y);
-    const w = f.img.width * f.scale;
-    const h = f.img.height * f.scale;
-    ctx.drawImage(f.img, p.x - w/2, p.y - h + TILE_H, w, h);
-  });
-
-  // player
-  const p = iso(player.x, player.y);
-  const img = playerImgs[player.dir][Math.floor(player.frame)%2];
-  ctx.drawImage(img, p.x - img.width/2, p.y - img.height + TILE_H);
-}
-
-// ------------------ LOOP ------------------
-function loop(){
-  update();
-  draw();
-  requestAnimationFrame(loop);
-}
-
-loop();
+updatePlayer();
