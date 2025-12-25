@@ -1,79 +1,36 @@
-const map = document.getElementById("map");
 const player = document.getElementById("player");
+const map = document.getElementById("map");
 
-const TILE_W = 40;
-const TILE_H = 20;
+let px = 300;
+let py = 220;
+let speed = 4;
 
-let playerTile = { x: 4, y: 4 };
-let targetTile = null;
-let direction = "s";
-
-function isoToScreen(x, y) {
-  return {
-    x: (x - y) * (TILE_W / 2),
-    y: (x + y) * (TILE_H / 2)
-  };
-}
-
-function screenToIso(x, y) {
-  return {
-    x: Math.round((x / (TILE_W / 2) + y / (TILE_H / 2)) / 2),
-    y: Math.round((y / (TILE_H / 2) - x / (TILE_W / 2)) / 2)
-  };
-}
-
-function updatePlayer() {
-  const p = isoToScreen(playerTile.x, playerTile.y);
-  player.style.left = p.x + map.clientWidth / 2 + "px";
-  player.style.top  = p.y + map.clientHeight / 2 + "px";
-}
-
-function updateDirection(from, to) {
-  if (to.x > from.x) direction = "e";
-  else if (to.x < from.x) direction = "w";
-  else if (to.y > from.y) direction = "s";
-  else direction = "n";
-
-  player.src = `/images/avatars/robe/${direction}/robe1.png`;
-}
-
-map.addEventListener("click", e => {
+map.addEventListener("click", (e) => {
   const rect = map.getBoundingClientRect();
-  const mx = e.clientX - rect.left - map.clientWidth / 2;
-  const my = e.clientY - rect.top  - map.clientHeight / 2;
+  const targetX = e.clientX - rect.left;
+  const targetY = e.clientY - rect.top;
 
-  targetTile = screenToIso(mx, my);
-  updateDirection(playerTile, targetTile);
-});
+  const dx = targetX - px;
+  const dy = targetY - py;
 
-function step() {
-  if (!targetTile) return;
-
-  if (playerTile.x === targetTile.x && playerTile.y === targetTile.y) {
-    targetTile = null;
-    return;
+  if (Math.abs(dx) > Math.abs(dy)) {
+    if (dx > 0) player.src = "/images/avatars/robe/e/robe1.png";
+    else player.src = "/images/avatars/robe/w/robe1.png";
+  } else {
+    if (dy > 0) player.src = "/images/avatars/robe/s/robe1.png";
+    else player.src = "/images/avatars/robe/n/robe1.png";
   }
 
-  if (playerTile.x < targetTile.x) playerTile.x++;
-  else if (playerTile.x > targetTile.x) playerTile.x--;
-  else if (playerTile.y < targetTile.y) playerTile.y++;
-  else if (playerTile.y > targetTile.y) playerTile.y--;
+  const move = setInterval(() => {
+    if (Math.abs(px - targetX) < speed && Math.abs(py - targetY) < speed) {
+      clearInterval(move);
+      return;
+    }
 
-  updatePlayer();
-}
+    px += Math.sign(dx) * speed;
+    py += Math.sign(dy) * speed;
 
-setInterval(step, 120);
-
-/* FURNI */
-function placeFurni(id, x, y) {
-  const el = document.getElementById(id);
-  const p = isoToScreen(x, y);
-  el.style.left = p.x + map.clientWidth / 2 + "px";
-  el.style.top  = p.y + map.clientHeight / 2 + "px";
-}
-
-placeFurni("bookshelf", 3, 2);
-placeFurni("chest", 4, 3);
-placeFurni("table", 5, 2);
-
-updatePlayer();
+    player.style.left = px + "px";
+    player.style.top = py + "px";
+  }, 16);
+});
