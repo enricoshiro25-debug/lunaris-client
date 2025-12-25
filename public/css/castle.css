@@ -13,27 +13,28 @@ html, body {
   position: relative;
 }
 
+/* MAPPA */
 #map {
   position: absolute;
+  width: 640px;
+  height: 480px;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: 600px;
-  height: 400px;
+  background-size: 40px 40px;
   background-image:
     linear-gradient(45deg, rgba(255,255,255,0.08) 25%, transparent 25%),
     linear-gradient(-45deg, rgba(255,255,255,0.08) 25%, transparent 25%);
-  background-size: 40px 40px;
   background-position: 0 0, 20px 20px;
 }
 
 /* PLAYER */
 #player {
   position: absolute;
-  width: 48px;
-  pointer-events: none;
+  width: 46px;
   image-rendering: pixelated;
   transform: translate(-50%, -100%);
+  pointer-events: none;
   z-index: 10;
 }
 
@@ -44,14 +45,6 @@ html, body {
   transform: translate(-50%, -100%);
 }
 
-#bookshelf {
-  width: 70px;
-}
-
-#chest {
-  width: 60px;
-}
-
-#table {
-  width: 70px;
-}
+#bookshelf { width: 72px; }
+#chest     { width: 60px; }
+#table     { width: 72px; }
