@@ -1,10 +1,57 @@
 html, body {
   margin: 0;
   padding: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(#14162a, #070812);
   overflow: hidden;
-  background: radial-gradient(circle at top, #0d1224, #05060c);
 }
 
-canvas {
-  display: block;
+#game {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+#map {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  height: 400px;
+  background-image:
+    linear-gradient(45deg, rgba(255,255,255,0.08) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(255,255,255,0.08) 25%, transparent 25%);
+  background-size: 40px 40px;
+  background-position: 0 0, 20px 20px;
+}
+
+/* PLAYER */
+#player {
+  position: absolute;
+  width: 48px;
+  pointer-events: none;
+  image-rendering: pixelated;
+  transform: translate(-50%, -100%);
+  z-index: 10;
+}
+
+/* FURNI */
+.furni {
+  position: absolute;
+  image-rendering: pixelated;
+  transform: translate(-50%, -100%);
+}
+
+#bookshelf {
+  width: 70px;
+}
+
+#chest {
+  width: 60px;
+}
+
+#table {
+  width: 70px;
 }
