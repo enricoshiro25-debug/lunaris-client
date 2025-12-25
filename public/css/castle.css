@@ -1,40 +1,36 @@
 html, body {
   margin: 0;
-  padding: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(#14162a, #070812);
+  background: #0b0d1a;
   overflow: hidden;
 }
 
 #game {
   width: 100%;
   height: 100%;
-  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-/* MAPPA */
 #map {
-  position: absolute;
+  position: relative;
   width: 640px;
   height: 480px;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  background:
+    linear-gradient(45deg, rgba(255,255,255,0.06) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(255,255,255,0.06) 25%, transparent 25%);
   background-size: 40px 40px;
-  background-image:
-    linear-gradient(45deg, rgba(255,255,255,0.08) 25%, transparent 25%),
-    linear-gradient(-45deg, rgba(255,255,255,0.08) 25%, transparent 25%);
-  background-position: 0 0, 20px 20px;
 }
 
 /* PLAYER */
 #player {
   position: absolute;
-  width: 46px;
+  width: 48px;
+  left: 300px;
+  top: 220px;
   image-rendering: pixelated;
-  transform: translate(-50%, -100%);
-  pointer-events: none;
   z-index: 10;
 }
 
@@ -42,9 +38,9 @@ html, body {
 .furni {
   position: absolute;
   image-rendering: pixelated;
-  transform: translate(-50%, -100%);
+  z-index: 5;
 }
 
-#bookshelf { width: 72px; }
-#chest     { width: 60px; }
-#table     { width: 72px; }
+#bookshelf { width: 72px; left: 260px; top: 140px; }
+#chest     { width: 56px; left: 300px; top: 200px; }
+#table     { width: 72px; left: 340px; top: 160px; }
