@@ -23,12 +23,12 @@ function screenToIso(x, y) {
 }
 
 function updatePlayer() {
-  const pos = isoToScreen(playerTile.x, playerTile.y);
-  player.style.left = pos.x + map.offsetWidth / 2 + "px";
-  player.style.top  = pos.y + map.offsetHeight / 2 + "px";
+  const p = isoToScreen(playerTile.x, playerTile.y);
+  player.style.left = p.x + map.clientWidth / 2 + "px";
+  player.style.top  = p.y + map.clientHeight / 2 + "px";
 }
 
-function setDirection(from, to) {
+function updateDirection(from, to) {
   if (to.x > from.x) direction = "e";
   else if (to.x < from.x) direction = "w";
   else if (to.y > from.y) direction = "s";
@@ -39,11 +39,11 @@ function setDirection(from, to) {
 
 map.addEventListener("click", e => {
   const rect = map.getBoundingClientRect();
-  const mx = e.clientX - rect.left - map.offsetWidth / 2;
-  const my = e.clientY - rect.top - map.offsetHeight / 2;
+  const mx = e.clientX - rect.left - map.clientWidth / 2;
+  const my = e.clientY - rect.top  - map.clientHeight / 2;
 
   targetTile = screenToIso(mx, my);
-  setDirection(playerTile, targetTile);
+  updateDirection(playerTile, targetTile);
 });
 
 function step() {
@@ -62,14 +62,14 @@ function step() {
   updatePlayer();
 }
 
-setInterval(step, 150);
+setInterval(step, 120);
 
-/* POSIZIONE FURNI */
+/* FURNI */
 function placeFurni(id, x, y) {
   const el = document.getElementById(id);
   const p = isoToScreen(x, y);
-  el.style.left = p.x + map.offsetWidth / 2 + "px";
-  el.style.top  = p.y + map.offsetHeight / 2 + "px";
+  el.style.left = p.x + map.clientWidth / 2 + "px";
+  el.style.top  = p.y + map.clientHeight / 2 + "px";
 }
 
 placeFurni("bookshelf", 3, 2);
