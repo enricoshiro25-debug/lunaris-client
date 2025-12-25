@@ -19,17 +19,19 @@ html, body {
   width: 640px;
   height: 480px;
   background:
-    linear-gradient(45deg, rgba(255,255,255,0.06) 25%, transparent 25%),
-    linear-gradient(-45deg, rgba(255,255,255,0.06) 25%, transparent 25%);
-  background-size: 40px 40px;
+    repeating-linear-gradient(
+      135deg,
+      rgba(255,255,255,0.05) 0px,
+      rgba(255,255,255,0.05) 24px,
+      transparent 24px,
+      transparent 48px
+    );
 }
 
 /* PLAYER */
 #player {
   position: absolute;
   width: 48px;
-  left: 300px;
-  top: 220px;
   image-rendering: pixelated;
   z-index: 10;
 }
@@ -41,6 +43,6 @@ html, body {
   z-index: 5;
 }
 
-#bookshelf { width: 72px; left: 260px; top: 140px; }
-#chest     { width: 56px; left: 300px; top: 200px; }
-#table     { width: 72px; left: 340px; top: 160px; }
+.bookshelf { width: 80px; left: 260px; top: 120px; }
+.chest     { width: 56px; left: 300px; top: 200px; }
+.table     { width: 80px; left: 340px; top: 150px; }
