@@ -5,6 +5,8 @@ const TILE_W = 64;
 const TILE_H = 32;
 const ORIGIN_X = window.innerWidth / 2;
 const ORIGIN_Y = 200;
+const GRID_SIZE = 7;
+const SPEED = 0.06;
 
 /* ===== ISO ===== */
 function isoToScreen(x, y) {
@@ -14,9 +16,19 @@ function isoToScreen(x, y) {
   };
 }
 
+function screenToIso(mx, my) {
+  const dx = mx - ORIGIN_X;
+  const dy = my - ORIGIN_Y;
+
+  return {
+    x: Math.round((dy / (TILE_H / 2) + dx / (TILE_W / 2)) / 2),
+    y: Math.round((dy / (TILE_H / 2) - dx / (TILE_W / 2)) / 2)
+  };
+}
+
 /* ===== GRIGLIA ===== */
-for (let x = 0; x < 7; x++) {
-  for (let y = 0; y < 7; y++) {
+for (let x = 0; x < GRID_SIZE; x++) {
+  for (let y = 0; y < GRID_SIZE; y++) {
     const tile = document.createElement("div");
     tile.className = "tile";
     const p = isoToScreen(x, y);
@@ -32,6 +44,9 @@ const player = {
   y: 3,
   dir: "s"
 };
+
+let target = null;
+let moving = false;
 
 const avatar = document.createElement("img");
 avatar.className = "avatar";
@@ -69,31 +84,56 @@ addFurni("/images/furni/bookshelf.png", 2, 2, 120, 200, 20);
 addFurni("/images/furni/table.png",     4, 2, 140, 110, 18);
 addFurni("/images/furni/chest.png",     3, 3, 120, 80,  12);
 
-/* ===== CLICK MOVE (TELEPORT PER ORA, STABILE) ===== */
+/* ===== CLICK ===== */
 map.addEventListener("click", (e) => {
-  const mx = e.clientX;
-  const my = e.clientY;
+  const pos = screenToIso(e.clientX, e.clientY);
 
-  const dx = mx - ORIGIN_X;
-  const dy = my - ORIGIN_Y;
+  if (
+    pos.x < 0 || pos.y < 0 ||
+    pos.x >= GRID_SIZE || pos.y >= GRID_SIZE
+  ) return;
 
-  const tx = Math.round((dy / (TILE_H / 2) + dx / (TILE_W / 2)) / 2);
-  const ty = Math.round((dy / (TILE_H / 2) - dx / (TILE_W / 2)) / 2);
+  target = { x: pos.x, y: pos.y };
 
-  if (tx < 0 || ty < 0 || tx > 6 || ty > 6) return;
+  const dx = target.x - player.x;
+  const dy = target.y - player.y;
 
-  const ddx = tx - player.x;
-  const ddy = ty - player.y;
-
-  if (Math.abs(ddx) > Math.abs(ddy)) {
-    player.dir = ddx > 0 ? "e" : "w";
+  if (Math.abs(dx) > Math.abs(dy)) {
+    player.dir = dx > 0 ? "e" : "w";
   } else {
-    player.dir = ddy > 0 ? "s" : "n";
+    player.dir = dy > 0 ? "s" : "n";
   }
 
-  player.x = tx;
-  player.y = ty;
-
   updateAvatar();
-  drawPlayer();
+
+  if (!moving) {
+    moving = true;
+    requestAnimationFrame(movePlayer);
+  }
 });
+
+/* ===== MOVIMENTO FLUIDO ===== */
+function movePlayer() {
+  if (!target) {
+    moving = false;
+    return;
+  }
+
+  const dx = target.x - player.x;
+  const dy = target.y - player.y;
+
+  if (Math.abs(dx) < SPEED && Math.abs(dy) < SPEED) {
+    player.x = target.x;
+    player.y = target.y;
+    target = null;
+    drawPlayer();
+    moving = false;
+    return;
+  }
+
+  player.x += Math.sign(dx) * SPEED;
+  player.y += Math.sign(dy) * SPEED;
+
+  drawPlayer();
+  requestAnimationFrame(movePlayer);
+}
