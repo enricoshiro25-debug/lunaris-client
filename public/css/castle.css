@@ -24,12 +24,12 @@ html, body {
   position: absolute;
   width: 64px;
   height: 96px;
-  pointer-events: none;
   image-rendering: pixelated;
+  pointer-events: none;
 }
 
 .furni {
   position: absolute;
-  pointer-events: none;
   image-rendering: pixelated;
+  pointer-events: none;
 }
