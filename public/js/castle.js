@@ -1,119 +1,99 @@
-const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
+const map = document.getElementById("map");
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
+/* ===== COSTANTI ===== */
 const TILE_W = 64;
 const TILE_H = 32;
-const GRID_SIZE = 8;
-const SPEED = 0.08;
+const ORIGIN_X = window.innerWidth / 2;
+const ORIGIN_Y = 200;
 
-const originX = canvas.width / 2;
-const originY = canvas.height / 3;
-
-// ================= PLAYER =================
-const player = {
-  x: 3,
-  y: 3,
-  drawX: 0,
-  drawY: 0,
-  dir: "s",
-  img: new Image()
-};
-
-let target = null;
-
-// ================= IMAGES =================
-function loadAvatar() {
-  player.img.src = `/images/avatars/robe/${player.dir}/robe1.png`;
-}
-
-loadAvatar();
-
-// ================= ISO =================
+/* ===== ISO ===== */
 function isoToScreen(x, y) {
   return {
-    x: originX + (x - y) * TILE_W / 2,
-    y: originY + (x + y) * TILE_H / 2
+    x: (x - y) * (TILE_W / 2) + ORIGIN_X,
+    y: (x + y) * (TILE_H / 2) + ORIGIN_Y
   };
 }
 
-function screenToIso(mx, my) {
-  const x = ((mx - originX) / (TILE_W / 2) + (my - originY) / (TILE_H / 2)) / 2;
-  const y = ((my - originY) / (TILE_H / 2) - (mx - originX) / (TILE_W / 2)) / 2;
-  return { x: Math.round(x), y: Math.round(y) };
+/* ===== GRIGLIA ===== */
+for (let x = 0; x < 7; x++) {
+  for (let y = 0; y < 7; y++) {
+    const tile = document.createElement("div");
+    tile.className = "tile";
+    const p = isoToScreen(x, y);
+    tile.style.left = p.x + "px";
+    tile.style.top  = p.y + "px";
+    map.appendChild(tile);
+  }
 }
 
-// ================= DRAW =================
-function drawGrid() {
-  ctx.strokeStyle = "rgba(255,255,255,0.08)";
-  for (let x = 0; x < GRID_SIZE; x++) {
-    for (let y = 0; y < GRID_SIZE; y++) {
-      const p = isoToScreen(x, y);
-      ctx.beginPath();
-      ctx.moveTo(p.x, p.y);
-      ctx.lineTo(p.x + TILE_W / 2, p.y + TILE_H / 2);
-      ctx.lineTo(p.x, p.y + TILE_H);
-      ctx.lineTo(p.x - TILE_W / 2, p.y + TILE_H / 2);
-      ctx.closePath();
-      ctx.stroke();
-    }
-  }
+/* ===== PLAYER ===== */
+const player = {
+  x: 3,
+  y: 3,
+  dir: "s"
+};
+
+const avatar = document.createElement("img");
+avatar.className = "avatar";
+map.appendChild(avatar);
+
+function updateAvatar() {
+  avatar.src = `/images/avatars/robe/${player.dir}/robe1.png`;
 }
 
 function drawPlayer() {
   const p = isoToScreen(player.x, player.y);
-  ctx.drawImage(player.img, p.x - 32, p.y - 64, 64, 96);
+  avatar.style.left = (p.x - 32) + "px";
+  avatar.style.top  = (p.y - 96) + "px";
 }
 
-// ================= MOVEMENT =================
-function updateDirection(dx, dy) {
-  if (Math.abs(dx) > Math.abs(dy)) {
-    player.dir = dx > 0 ? "e" : "w";
+updateAvatar();
+drawPlayer();
+
+/* ===== FURNI ===== */
+function addFurni(src, x, y, w, h, foot) {
+  const img = document.createElement("img");
+  img.src = src;
+  img.className = "furni";
+  img.style.width = w + "px";
+  img.style.height = h + "px";
+
+  const p = isoToScreen(x, y);
+  img.style.left = (p.x - w / 2) + "px";
+  img.style.top  = (p.y - h + foot) + "px";
+
+  map.appendChild(img);
+}
+
+addFurni("/images/furni/bookshelf.png", 2, 2, 120, 200, 20);
+addFurni("/images/furni/table.png",     4, 2, 140, 110, 18);
+addFurni("/images/furni/chest.png",     3, 3, 120, 80,  12);
+
+/* ===== CLICK MOVE (TELEPORT PER ORA, STABILE) ===== */
+map.addEventListener("click", (e) => {
+  const mx = e.clientX;
+  const my = e.clientY;
+
+  const dx = mx - ORIGIN_X;
+  const dy = my - ORIGIN_Y;
+
+  const tx = Math.round((dy / (TILE_H / 2) + dx / (TILE_W / 2)) / 2);
+  const ty = Math.round((dy / (TILE_H / 2) - dx / (TILE_W / 2)) / 2);
+
+  if (tx < 0 || ty < 0 || tx > 6 || ty > 6) return;
+
+  const ddx = tx - player.x;
+  const ddy = ty - player.y;
+
+  if (Math.abs(ddx) > Math.abs(ddy)) {
+    player.dir = ddx > 0 ? "e" : "w";
   } else {
-    player.dir = dy > 0 ? "s" : "n";
-  }
-  loadAvatar();
-}
-
-function updateMovement() {
-  if (!target) return;
-
-  const dx = target.x - player.x;
-  const dy = target.y - player.y;
-
-  if (Math.abs(dx) < SPEED && Math.abs(dy) < SPEED) {
-    player.x = target.x;
-    player.y = target.y;
-    target = null;
-    return;
+    player.dir = ddy > 0 ? "s" : "n";
   }
 
-  player.x += Math.sign(dx) * SPEED;
-  player.y += Math.sign(dy) * SPEED;
-}
+  player.x = tx;
+  player.y = ty;
 
-// ================= LOOP =================
-function loop() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawGrid();
-  updateMovement();
+  updateAvatar();
   drawPlayer();
-  requestAnimationFrame(loop);
-}
-
-loop();
-
-// ================= CLICK =================
-canvas.addEventListener("click", (e) => {
-  const pos = screenToIso(e.clientX, e.clientY);
-
-  if (
-    pos.x < 0 || pos.y < 0 ||
-    pos.x >= GRID_SIZE || pos.y >= GRID_SIZE
-  ) return;
-
-  target = { x: pos.x, y: pos.y };
-  updateDirection(target.x - player.x, target.y - player.y);
 });
