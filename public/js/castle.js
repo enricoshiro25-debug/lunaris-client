@@ -2,35 +2,67 @@ const player = document.getElementById("player");
 const map = document.getElementById("map");
 
 let px = 300;
-let py = 220;
-let speed = 4;
+let py = 260;
+let tx = px;
+let ty = py;
+
+let direction = "s";
+let frame = 0;
+let moving = false;
+
+const speed = 2;
+const frameDelay = 12;
+let frameCounter = 0;
+
+player.style.left = px + "px";
+player.style.top = py + "px";
 
 map.addEventListener("click", (e) => {
   const rect = map.getBoundingClientRect();
-  const targetX = e.clientX - rect.left;
-  const targetY = e.clientY - rect.top;
+  tx = e.clientX - rect.left - 24;
+  ty = e.clientY - rect.top - 48;
 
-  const dx = targetX - px;
-  const dy = targetY - py;
+  const dx = tx - px;
+  const dy = ty - py;
 
   if (Math.abs(dx) > Math.abs(dy)) {
-    if (dx > 0) player.src = "/images/avatars/robe/e/robe1.png";
-    else player.src = "/images/avatars/robe/w/robe1.png";
+    direction = dx > 0 ? "e" : "w";
   } else {
-    if (dy > 0) player.src = "/images/avatars/robe/s/robe1.png";
-    else player.src = "/images/avatars/robe/n/robe1.png";
+    direction = dy > 0 ? "s" : "n";
   }
 
-  const move = setInterval(() => {
-    if (Math.abs(px - targetX) < speed && Math.abs(py - targetY) < speed) {
-      clearInterval(move);
-      return;
-    }
-
-    px += Math.sign(dx) * speed;
-    py += Math.sign(dy) * speed;
-
-    player.style.left = px + "px";
-    player.style.top = py + "px";
-  }, 16);
+  moving = true;
 });
+
+function update() {
+  let moved = false;
+
+  if (Math.abs(px - tx) > speed) {
+    px += Math.sign(tx - px) * speed;
+    moved = true;
+  }
+  if (Math.abs(py - ty) > speed) {
+    py += Math.sign(ty - py) * speed;
+    moved = true;
+  }
+
+  if (!moved) {
+    moving = false;
+    frame = 0;
+  }
+
+  frameCounter++;
+  if (moving && frameCounter > frameDelay) {
+    frame = frame === 0 ? 1 : 0;
+    frameCounter = 0;
+  }
+
+  player.src = `/images/avatars/robe/${direction}/robe1_${frame}.png`;
+
+  player.style.left = px + "px";
+  player.style.top = py + "px";
+
+  requestAnimationFrame(update);
+}
+
+update();
