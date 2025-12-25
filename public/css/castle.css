@@ -1,35 +1,10 @@
 html, body {
   margin: 0;
-  width: 100%;
-  height: 100%;
-  background: #0b1020;
+  padding: 0;
   overflow: hidden;
+  background: radial-gradient(circle at top, #0d1224, #05060c);
 }
 
-#map {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-}
-
-.tile {
-  position: absolute;
-  width: 64px;
-  height: 32px;
-  border: 1px solid rgba(255,255,255,0.06);
-  transform: translate(-32px, -16px);
-}
-
-.avatar {
-  position: absolute;
-  width: 64px;
-  height: 96px;
-  image-rendering: pixelated;
-  pointer-events: none;
-}
-
-.furni {
-  position: absolute;
-  image-rendering: pixelated;
-  pointer-events: none;
+canvas {
+  display: block;
 }
