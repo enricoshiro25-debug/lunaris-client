@@ -12,7 +12,7 @@ window.addEventListener("resize", () => {
 
 const TILE_W = 64;
 const TILE_H = 32;
-const ORIGIN_Y = 220;
+const ORIGIN_Y = 240;
 
 /* ================= ISO ================= */
 
@@ -47,12 +47,12 @@ const playerImg = {
   w: [load("/images/avatars/robe/w/robe1_0.png"), load("/images/avatars/robe/w/robe1_1.png")]
 };
 
-/* ================= FURNI ================= */
+/* ================= FURNI (SCALE CORRETTE) ================= */
 
 const furni = [
-  { img: load("/images/furni/bookshelf.png"), x: 4, y: 3, scale: 0.45 },
-  { img: load("/images/furni/chest.png"),     x: 5, y: 4, scale: 0.40 },
-  { img: load("/images/furni/table.png"),     x: 6, y: 3, scale: 0.45 }
+  { img: load("/images/furni/bookshelf.png"), x: 4, y: 3, scale: 0.38 },
+  { img: load("/images/furni/chest.png"),     x: 5, y: 4, scale: 0.32 },
+  { img: load("/images/furni/table.png"),     x: 6, y: 3, scale: 0.36 }
 ];
 
 /* ================= INPUT ================= */
@@ -77,15 +77,17 @@ function update() {
   const dx = player.target.x - player.x;
   const dy = player.target.y - player.y;
 
-  if (Math.abs(dx) > 0.05) player.x += Math.sign(dx) * 0.06;
-  if (Math.abs(dy) > 0.05) player.y += Math.sign(dy) * 0.06;
+  // movimento
+  player.x += Math.sign(dx) * 0.06;
+  player.y += Math.sign(dy) * 0.06;
 
-  if (Math.abs(dx) > Math.abs(dy)) {
-    player.dir = dx > 0 ? "s" : "n";
-  } else {
-    player.dir = dy > 0 ? "e" : "w";
-  }
+  /* ===== DIREZIONE ISO CORRETTA ===== */
+  if (dx > 0 && dy > 0) player.dir = "s";
+  else if (dx < 0 && dy < 0) player.dir = "n";
+  else if (dx > 0 && dy < 0) player.dir = "e";
+  else if (dx < 0 && dy > 0) player.dir = "w";
 
+  // stop
   if (Math.abs(dx) < 0.05 && Math.abs(dy) < 0.05) {
     player.x = player.target.x;
     player.y = player.target.y;
