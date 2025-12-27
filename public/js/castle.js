@@ -12,11 +12,14 @@ window.addEventListener("resize", () => {
 
 const TILE_W = 64;
 const TILE_H = 32;
+const ORIGIN_Y = 220;
+
+/* ================= ISO ================= */
 
 function isoToScreen(x, y) {
   return {
     x: (x - y) * TILE_W / 2 + canvas.width / 2,
-    y: (x + y) * TILE_H / 2 + 200
+    y: (x + y) * TILE_H / 2 + ORIGIN_Y
   };
 }
 
@@ -24,44 +27,43 @@ function isoToScreen(x, y) {
 
 const player = {
   x: 4,
-  y: 4,
+  y: 5,
   dir: "s",
   frame: 0,
-  moving: false,
-  target: null
+  target: null,
+  moving: false
 };
 
-const robeImages = {};
-["n", "s", "e", "w"].forEach(d => {
-  robeImages[d] = [
-    loadImage(`/images/avatars/robe/${d}/robe1_0.png`),
-    loadImage(`/images/avatars/robe/${d}/robe1_1.png`)
-  ];
-});
-
-function loadImage(src) {
-  const img = new Image();
-  img.src = src;
-  return img;
+function load(src) {
+  const i = new Image();
+  i.src = src;
+  return i;
 }
+
+const playerImg = {
+  n: [load("/images/avatars/robe/n/robe1_0.png"), load("/images/avatars/robe/n/robe1_1.png")],
+  s: [load("/images/avatars/robe/s/robe1_0.png"), load("/images/avatars/robe/s/robe1_1.png")],
+  e: [load("/images/avatars/robe/e/robe1_0.png"), load("/images/avatars/robe/e/robe1_1.png")],
+  w: [load("/images/avatars/robe/w/robe1_0.png"), load("/images/avatars/robe/w/robe1_1.png")]
+};
 
 /* ================= FURNI ================= */
 
 const furni = [
-  { img: loadImage("/images/furni/bookshelf.png"), x: 3, y: 3, scale: 0.6 },
-  { img: loadImage("/images/furni/chest.png"),     x: 4, y: 3, scale: 0.6 },
-  { img: loadImage("/images/furni/table.png"),     x: 5, y: 3, scale: 0.6 }
+  { img: load("/images/furni/bookshelf.png"), x: 4, y: 3, scale: 0.45 },
+  { img: load("/images/furni/chest.png"),     x: 5, y: 4, scale: 0.40 },
+  { img: load("/images/furni/table.png"),     x: 6, y: 3, scale: 0.45 }
 ];
 
 /* ================= INPUT ================= */
 
 canvas.addEventListener("click", e => {
-  const rect = canvas.getBoundingClientRect();
-  const mx = e.clientX - rect.left - canvas.width / 2;
-  const my = e.clientY - rect.top - 200;
+  const r = canvas.getBoundingClientRect();
+  const mx = e.clientX - r.left - canvas.width / 2;
+  const my = e.clientY - r.top - ORIGIN_Y;
 
-  const tx = Math.round((my / TILE_H) + (mx / TILE_W));
-  const ty = Math.round((my / TILE_H) - (mx / TILE_W));
+  const tx = Math.round(my / TILE_H + mx / TILE_W);
+  const ty = Math.round(my / TILE_H - mx / TILE_W);
 
   player.target = { x: tx, y: ty };
   player.moving = true;
@@ -72,43 +74,32 @@ canvas.addEventListener("click", e => {
 function update() {
   if (!player.moving || !player.target) return;
 
-  if (player.x < player.target.x) {
-    player.x += 0.05;
-    player.dir = "s";
-  }
-  if (player.x > player.target.x) {
-    player.x -= 0.05;
-    player.dir = "n";
-  }
-  if (player.y < player.target.y) {
-    player.y += 0.05;
-    player.dir = "e";
-  }
-  if (player.y > player.target.y) {
-    player.y -= 0.05;
-    player.dir = "w";
+  const dx = player.target.x - player.x;
+  const dy = player.target.y - player.y;
+
+  if (Math.abs(dx) > 0.05) player.x += Math.sign(dx) * 0.06;
+  if (Math.abs(dy) > 0.05) player.y += Math.sign(dy) * 0.06;
+
+  if (Math.abs(dx) > Math.abs(dy)) {
+    player.dir = dx > 0 ? "s" : "n";
+  } else {
+    player.dir = dy > 0 ? "e" : "w";
   }
 
-  if (
-    Math.abs(player.x - player.target.x) < 0.05 &&
-    Math.abs(player.y - player.target.y) < 0.05
-  ) {
+  if (Math.abs(dx) < 0.05 && Math.abs(dy) < 0.05) {
     player.x = player.target.x;
     player.y = player.target.y;
     player.moving = false;
-  }
-
-  if (player.moving) {
-    player.frame = (player.frame + 0.1) % 2;
-  } else {
     player.frame = 0;
+  } else {
+    player.frame = (player.frame + 0.15) % 2;
   }
 }
 
 /* ================= DRAW ================= */
 
 function drawGrid() {
-  ctx.strokeStyle = "rgba(255,255,255,0.05)";
+  ctx.strokeStyle = "rgba(255,255,255,0.04)";
   for (let x = 0; x < 10; x++) {
     for (let y = 0; y < 10; y++) {
       const p = isoToScreen(x, y);
@@ -125,30 +116,33 @@ function drawGrid() {
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-
   drawGrid();
+
+  const entities = [];
 
   furni.forEach(f => {
     const p = isoToScreen(f.x, f.y);
-    ctx.drawImage(
-      f.img,
-      p.x - f.img.width * f.scale / 2,
-      p.y - f.img.height * f.scale + 16,
-      f.img.width * f.scale,
-      f.img.height * f.scale
-    );
+    entities.push({
+      y: f.y,
+      draw: () => ctx.drawImage(
+        f.img,
+        p.x - f.img.width * f.scale / 2,
+        p.y - f.img.height * f.scale + 10,
+        f.img.width * f.scale,
+        f.img.height * f.scale
+      )
+    });
   });
 
-  const p = isoToScreen(player.x, player.y);
-  const img = robeImages[player.dir][Math.floor(player.frame)];
+  const pp = isoToScreen(player.x, player.y);
+  const img = playerImg[player.dir][Math.floor(player.frame)];
 
-  ctx.drawImage(
-    img,
-    p.x - 32,
-    p.y - 64,
-    64,
-    80
-  );
+  entities.push({
+    y: player.y,
+    draw: () => ctx.drawImage(img, pp.x - 32, pp.y - 72, 64, 80)
+  });
+
+  entities.sort((a, b) => a.y - b.y).forEach(e => e.draw());
 }
 
 /* ================= LOOP ================= */
