@@ -2,23 +2,22 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <title>Castello</title>
-  <link rel="stylesheet" href="/css/castle.css">
+  <title>TEST CLICK</title>
 </head>
-<body>
+<body style="margin:0; background:black;">
 
-<div id="game">
-  <div id="map">
-
-    <img id="player" src="/images/avatars/robe/s/robe1_0.png">
-
-    <img class="furni bookshelf" src="/images/furni/bookshelf.png">
-    <img class="furni chest" src="/images/furni/chest.png">
-    <img class="furni table" src="/images/furni/table.png">
-
-  </div>
+<div id="box" style="
+  width:100vw;
+  height:100vh;
+  background:red;
+">
 </div>
 
-<script src="/js/castle.js"></script>
+<script>
+  document.getElementById("box").addEventListener("click", () => {
+    alert("CLICK FUNZIONA");
+  });
+</script>
+
 </body>
 </html>
